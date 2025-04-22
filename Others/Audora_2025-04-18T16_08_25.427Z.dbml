@@ -1,0 +1,434 @@
+Table Subscriptions {
+	Id uniqueidentifier [ pk, not null ]
+	ListenerId uniqueidentifier [ not null ]
+	PlanType nvarchar [ not null ]
+	StartDate datetime2 [ not null ]
+	EndDate datetime2 [ not null ]
+	IsActive bit [ not null ]
+
+	indexes {
+		(Id, ListenerId) [ name: 'Subscriptions_index_0' ]
+		(Id) [ name: 'public_Subscriptions_index_21' ]
+		(ListenerId) [ name: 'public_Subscriptions_index_22' ]
+		(Id, ListenerId) [ name: 'public_idx_Subscriptions_Id_UserId' ]
+	}
+}
+
+Table ListeningProgress {
+	Id uniqueidentifier [ pk, not null ]
+	ListenerId uniqueidentifier [ not null ]
+	EpisodeId uniqueidentifier [ not null ]
+	LastPosition bigint [ not null ]
+	UpdatedAt datetime2
+
+	indexes {
+		(Id) [ name: 'ListeningProgress_index_4' ]
+	}
+}
+
+Table Profile {
+	CreatorId uniqueidentifier [ pk, not null ]
+	Bio varchar [ not null ]
+	Avatar varchar [ not null ]
+	DisplayName varchar [ not null ]
+	Website varchar [ not null ]
+
+	indexes {
+		(CreatorId) [ name: 'Profile_index_5' ]
+		(CreatorId) [ name: 'public_Profile_index_18' ]
+	}
+}
+
+Table Episodes {
+	Id uniqueidentifier [ pk, not null ]
+	PodcastId uniqueidentifier [ not null ]
+	Name varchar [ not null ]
+	Description varchar [ not null ]
+	Duration int [ not null ]
+	AudioFileId uniqueidentifier [ not null ]
+	PodcastName bigint [ not null ]
+	IsPublished varchar [ not null ]
+	EpisodeNumber int [ not null ]
+	Language varchar [ not null ]
+	Slug varchar [ not null ]
+	ReleaseDate varchar [ not null ]
+	CreatedAt varchar [ not null ]
+	UpdatedAt varchar [ not null ]
+
+	indexes {
+		(Id) [ name: 'public_Episodes_index_4' ]
+		(PodcastId) [ name: 'public_Episodes_index_5' ]
+		(Id, PodcastId) [ name: 'public_idx_Episodes_Id_PodcastId' ]
+	}
+}
+
+Table PodcastStats {
+	PodcastId uniqueidentifier [ pk, not null ]
+	AverageRating decimal [ not null ]
+	RatingCount int [ not null ]
+
+	indexes {
+		(PodcastId) [ name: 'PodcastStats_index_10' ]
+		(PodcastId) [ name: 'public_PodcastStats_index_12' ]
+	}
+}
+
+Table EpisodeStats {
+	Id uniqueidentifier [ pk, not null ]
+	EpisodeId varchar [ not null ]
+	PlayCount bigint [ not null ]
+	TotalListenTime int [ not null ]
+	LikeCount int [ not null ]
+	DislikeCount integer [ not null ]
+	CommentCount integer [ not null ]
+	CompletionRate decimal [ not null ]
+	AvgListenDuration decimal [ not null ]
+	SkipCount int [ not null ]
+	Replays varchar [ not null ]
+	Downloads int [ not null ]
+
+	indexes {
+		(Id) [ name: 'EpisodeStats_index_12' ]
+		(EpisodeId) [ name: 'public_EpisodeStats_index_9' ]
+	}
+}
+
+Table Reactions {
+	Id uniqueidentifier [ pk, not null ]
+	ListenerId uniqueidentifier [ not null ]
+	EntityId uniqueidentifier [ not null ]
+	EntityType nvarchar [ not null ]
+	ReactionType tinyint [ not null ]
+	CreatedAt datetime2 [ not null ]
+
+	indexes {
+		(Id) [ name: 'Reactions_index_14' ]
+	}
+}
+
+Table Invitations {
+	Id uniqueidentifier [ pk, not null ]
+	PodcastId uniqueidentifier [ not null ]
+	InvitedEmail varchar [ not null ]
+	InvitedById uniqueidentifier [ not null, note: 'Bruh' ]
+	CreatedAt varchar [ not null ]
+	AcceptedAt varchar [ not null ]
+	Status varchar [ not null ]
+	ExpiresAt varchar [ not null ]
+
+	indexes {
+		(Id) [ name: 'public_Invitations_index_23' ]
+		(PodcastId) [ name: 'public_Invitations_index_24' ]
+		(InvitedById) [ name: 'public_Invitations_index_25' ]
+		(Id, PodcastId, InvitedById) [ name: 'public_idx_Invitations_Id_PodcastId_InvitedById' ]
+	}
+}
+
+Table PodcastTags {
+	TagId uniqueidentifier [ pk, not null ]
+	PodcastId uniqueidentifier [ pk, not null ]
+
+	indexes {
+		(TagId) [ name: 'public_PodcastTags_index_6' ]
+		(PodcastId) [ name: 'public_PodcastTags_index_7' ]
+		(TagId, PodcastId) [ name: 'public_idx_PodcastTags_TagId_PodcastId' ]
+	}
+}
+
+Table PlaylistEpisodes {
+	PlayListId uniqueidentifier [ pk, not null ]
+	EpisodeId uniqueidentifier [ pk, not null ]
+	Order int [ not null ]
+	AddedAt datetime2 [ not null ]
+
+	indexes {
+		(PlayListId, EpisodeId) [ name: 'PlaylistEpisodes_index_22' ]
+	}
+}
+
+Table Analytics {
+	Id uniqueidentifier [ pk, not null ]
+	CreatorId uniqueidentifier [ not null ]
+	PlayCount bigint [ not null ]
+	Followers integer [ not null ]
+	TotalListeningHours bigint [ not null ]
+
+	indexes {
+		(Id) [ name: 'public_Analytics_index_10' ]
+		(CreatorId) [ name: 'public_Analytics_index_11' ]
+		(Id, CreatorId) [ name: 'public_idx_Analytics_Id_CreatorId' ]
+	}
+}
+
+Table Playlists {
+	Id uniqueidentifier [ pk, not null ]
+	ListenerId uniqueidentifier [ not null ]
+	Name nvarchar(150) [ not null ]
+	Description nvarchar(500) [ not null ]
+	IsPublic bit [ not null ]
+	CreatedAt datetime2 [ not null ]
+	UpdatedAt datetime2 [ not null ]
+	CoverImageUrl nvarchar [ not null ]
+
+	indexes {
+		(Id) [ name: 'Playlists_index_26' ]
+	}
+}
+
+Table PlaybackHistory {
+	Id uniqueidentifier [ pk, not null ]
+	ListenerId uniqueidentifier [ not null ]
+	EpisodeId uniqueidentifier [ not null ]
+	PlayedAt datetime2 [ not null ]
+
+	indexes {
+		(Id) [ name: 'PlaybackHistory_index_27' ]
+	}
+}
+
+Table Users {
+	Id uniqueidentifier [ pk, not null ]
+
+	indexes {
+		(Id) [ name: 'Users_index_28' ]
+		(Id) [ name: 'public_Users_index_3' ]
+	}
+}
+
+Table Notifications {
+	Id uniqueidentifier [ pk, not null ]
+	UserId uniqueidentifier [ not null ]
+	Message varchar [ not null ]
+	Type varchar [ not null ]
+	CreatedAt varchar [ not null ]
+	IsRead bit [ not null ]
+
+	indexes {
+		(Id) [ name: 'public_Notifications_index_15' ]
+		(UserId) [ name: 'public_Notifications_index_16' ]
+		(Id, UserId) [ name: 'public_idx_Notifications_Id_UserId' ]
+	}
+}
+
+Table Tags {
+	Id uniqueidentifier [ pk, not null ]
+	Name varchar [ not null ]
+
+	indexes {
+		(Id) [ name: 'Tags_index_33' ]
+		(Id) [ name: 'public_Tags_index_8' ]
+	}
+}
+
+Table Podcasts {
+	Id uniqueidentifier [ pk, not null ]
+	Name varchar [ not null ]
+	Description text [ not null ]
+	CoverImageUrl text [ not null ]
+	IsPublished varchar [ not null ]
+	CategoryId uniqueidentifier [ not null ]
+	Language varchar [ not null ]
+	TotalEpisodes int [ not null ]
+	Slug varchar [ not null ]
+	RssFeedUrl text [ not null ]
+	CreatorId varchar [ not null ]
+	CreatedAt varchar [ not null ]
+	UpdatedAt varchar [ not null ]
+
+	indexes {
+		(Id, CategoryId) [ name: 'Podcasts_index_35' ]
+		(Id) [ name: 'public_Podcasts_index_0' ]
+		(CategoryId) [ name: 'public_Podcasts_index_1' ]
+		(CreatorId) [ name: 'public_Podcasts_index_2' ]
+		(Id, CategoryId, CreatorId) [ name: 'public_idx_Podcasts_Id_CategoryId_CreatorId' ]
+	}
+}
+
+Table Categories {
+	Id uniqueidentifier [ pk, not null ]
+	Name varchar [ not null ]
+
+	indexes {
+		(Id) [ name: 'Categories_index_40' ]
+		(Id) [ name: 'public_Categories_index_17' ]
+	}
+}
+
+Table SocialLinks {
+	Id uniqueidentifier [ pk, not null ]
+	CreatorId uniqueidentifier [ not null ]
+	PlatformName varchar [ not null ]
+	Url varchar [ not null ]
+
+	indexes {
+		(Id) [ name: 'public_SocialLinks_index_19' ]
+		(CreatorId) [ name: 'public_SocialLinks_index_20' ]
+		(Id, CreatorId) [ name: 'public_idx_SocialLinks_Id_CreatorId' ]
+	}
+}
+
+Table Comments {
+	Id uniqueidentifier [ pk, not null ]
+	ListenerId uniqueidentifier [ not null ]
+	ParentId uniqueidentifier [ not null ]
+	EntityId uniqueidentifier [ not null ]
+	EntityType varchar [ not null ]
+	Content nvarchar [ not null ]
+	CreatedAt datetime2 [ not null ]
+
+	indexes {
+		(Id) [ name: 'Comments_index_45' ]
+		(Id) [ name: 'public_Comments_index_13' ]
+		(Id) [ name: 'public_idx_Comments_Id_EpisodeId' ]
+	}
+}
+
+Table PodcastRatings {
+	PodcastId uniqueidentifier [ pk, not null ]
+	ListenerId uniqueidentifier [ pk, not null ]
+	Rating tinyint [ not null ]
+	AddedAt datetime2 [ not null ]
+
+	indexes {
+		(PodcastId, ListenerId) [ name: 'PodcastRatings_index_48' ]
+	}
+}
+
+Table AudioFile {
+	id uniqueidentifier [ pk, not null, unique ]
+	AudioUrl varchar [ not null, note: 'Public or private URL to stream/download' ]
+	StorageProvider varchar [ note: 'E.g., "AWS_S3", "AzureBlob"' ]
+	Name varchar [ not null, note: 'Original uploaded file name' ]
+	Extension varchar [ not null, note: 'File extension like "mp3", "wav"' ]
+	ContentType varchar [ not null, note: 'MIME type like "audio/mpeg"' ]
+	ByteSize bigint [ not null, note: 'File size in bytes' ]
+	Duration integer [ not null, note: 'Total duration of audio' ]
+	BitrateKbps integer [ note: 'Optional bitrate for quality indication' ]
+	IsTranscoded bit [ not null, note: 'Indicates if it has been transcoded for streaming' ]
+	Checksum nvarchar [ note: 'Optional SHA256 or similar file checksum' ]
+	UploadedAt datetime2 [ not null, note: 'Upload timestamp' ]
+}
+
+Ref fk_Users_Id_Analytics {
+	Users.Id < Analytics.CreatorId [ delete: no action, update: no action ]
+}
+
+Ref fk_Podcasts_CategoryId_Categories {
+	Podcasts.CategoryId < Categories.Id [ delete: no action, update: no action ]
+}
+
+Ref fk_Comments_Id_Comments {
+	Comments.Id - Comments.ParentId [ delete: cascade, update: no action ]
+}
+
+Ref fk_EpisodeStats_EpisodeId_Episodes {
+	EpisodeStats.EpisodeId < Episodes.Id [ delete: no action, update: no action ]
+}
+
+Ref fk_Users_Id_Invitations {
+	Users.Id < Invitations.InvitedById [ delete: no action, update: no action ]
+}
+
+Ref fk_Podcasts_Id_Invitations {
+	Podcasts.Id < Invitations.PodcastId [ delete: no action, update: no action ]
+}
+
+Ref fk_Episodes_Id_ListeningProgress {
+	Episodes.Id < ListeningProgress.EpisodeId [ delete: no action, update: no action ]
+}
+
+Ref fk_Users_Id_ListeningProgress {
+	Users.Id < ListeningProgress.ListenerId [ delete: no action, update: no action ]
+}
+
+Ref fk_Users_Id_Notifications {
+	Users.Id < Notifications.UserId [ delete: no action, update: no action ]
+}
+
+Ref fk_Episodes_Id_PlaybackHistory {
+	Episodes.Id < PlaybackHistory.EpisodeId [ delete: no action, update: no action ]
+}
+
+Ref fk_Users_Id_PlaybackHistory {
+	Users.Id < PlaybackHistory.ListenerId [ delete: no action, update: no action ]
+}
+
+Ref fk_Users_Id_Comments {
+	Users.Id < Comments.ListenerId [ delete: no action, update: no action ]
+}
+
+Ref fk_Podcasts_Id_PodcastRatings {
+	Podcasts.Id < Comments.Id [ delete: no action, update: no action ]
+}
+
+Ref fk_Users_Id_Podcasts {
+	Users.Id < Podcasts.CreatorId [ delete: no action, update: no action ]
+}
+
+Ref fk_Episodes_PodcastId_Podcasts {
+	Episodes.PodcastId < Podcasts.Id [ delete: no action, update: no action ]
+}
+
+Ref fk_PodcastTags_PodcastId_Podcasts {
+	PodcastTags.PodcastId < Podcasts.Id [ delete: no action, update: no action ]
+}
+
+Ref fk_Podcasts_Id_PodcastStats {
+	Podcasts.Id < PodcastStats.PodcastId [ delete: no action, update: no action ]
+}
+
+Ref fk_Users_Id_Profile {
+	Users.Id < Profile.CreatorId [ delete: no action, update: no action ]
+}
+
+Ref fk_Profile_CreatorId_SocialLinks {
+	Profile.CreatorId < SocialLinks.CreatorId [ delete: no action, update: no action ]
+}
+
+Ref fk_Users_Id_Subscriptions {
+	Users.Id < Subscriptions.ListenerId [ delete: no action, update: no action ]
+}
+
+Ref fk_PodcastTags_TagId_Tags {
+	PodcastTags.TagId < Tags.Id [ delete: no action, update: no action ]
+}
+
+Ref fk_Episodes_Id_Comments {
+	Episodes.Id < Comments.EntityId [ delete: no action, update: no action ]
+}
+
+Ref fk_Users_Id_Playlists {
+	Users.Id < Playlists.ListenerId [ delete: no action, update: no action ]
+}
+
+Ref fk_Playlists_Id_PlaylistEpisodes {
+	Playlists.Id < PlaylistEpisodes.PlayListId [ delete: no action, update: no action ]
+}
+
+Ref fk_Episodes_Id_PlaylistEpisodes {
+	Episodes.Id < PlaylistEpisodes.EpisodeId [ delete: no action, update: no action ]
+}
+
+Ref fk_Users_Id_Reactions {
+	Users.Id < Reactions.ListenerId [ delete: no action, update: no action ]
+}
+
+Ref fk_EpisodeStats_Id_Reactions {
+	EpisodeStats.Id < Reactions.EntityId [ delete: no action, update: no action ]
+}
+
+Ref fk_Comments_Id_Reactions {
+	Comments.Id < Reactions.EntityId [ delete: no action, update: no action ]
+}
+
+Ref fk_PodcastRatings_PodcastId_Podcasts {
+	PodcastRatings.PodcastId > Podcasts.Id [ delete: no action, update: no action ]
+}
+
+Ref fk_PodcastRatings_ListenerId_Users {
+	PodcastRatings.ListenerId > Users.Id [ delete: no action, update: no action ]
+}
+
+Ref fk_Episodes_AudioFileId_AudioFile {
+	Episodes.AudioFileId - AudioFile.id [ delete: no action, update: no action ]
+}

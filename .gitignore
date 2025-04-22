@@ -1,0 +1,45 @@
+# Rider / JetBrains IDE
+.idea/
+*.sln.iml
+
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Rider system files
+*.dotCover
+.idea/
+
+# Visual Studio Code (if used)
+.vscode/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Others
+*.ncrunch*
+*.localhistory
+*.vspscc
+*.vssscc
+_ReSharper*/
+*.resharper
+*.DotSettings.user

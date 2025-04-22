@@ -1,0 +1,352 @@
+
+Table "Subscriptions" {
+  "Id" uniqueidentifier [not null]
+  "ListenerId" uniqueidentifier [not null]
+  "PlanType" nvarchar [not null]
+  "StartDate" datetime2 [not null]
+  "EndDate" datetime2 [not null]
+  "IsActive" bit [not null]
+
+  Indexes {
+    (Id, ListenerId) [pk]
+    Id [name: "public_Subscriptions_index_21"]
+    ListenerId [name: "public_Subscriptions_index_22"]
+    (Id, ListenerId) [name: "public_idx_Subscriptions_Id_UserId"]
+  }
+}
+
+Table "ListeningProgress" {
+  "Id" uniqueidentifier [not null]
+  "ListenerId" uniqueidentifier [not null]
+  "EpisodeId" uniqueidentifier [not null]
+  "LastPosition" bigint [not null]
+  "UpdatedAt" datetime2
+
+  Indexes {
+    Id [pk]
+  }
+}
+
+Table "Profile" {
+  "CreatorId" varchar [not null]
+  "Followers" bigint [not null]
+  "Bio" varchar [not null]
+  "Avatar" varchar [not null]
+  "DisplayName" varchar [not null]
+  "Website" varchar [not null]
+
+  Indexes {
+    CreatorId [pk]
+    CreatorId [name: "public_Profile_index_18"]
+  }
+}
+
+Table "Episodes" {
+  "Id" uniqueidentifier [not null]
+  "PodcastId" varchar [not null]
+  "Title" varchar [not null]
+  "Description" varchar [not null]
+  "Duration" int [not null]
+  "AudioFileUrl" varchar [not null]
+  "PodcastTitle" bigint [not null]
+  "IsPublished" varchar [not null]
+  "EpisodeNumber" int [not null]
+  "Language" varchar [not null]
+  "Slug" varchar [not null]
+  "ReleaseDate" varchar [not null]
+  "CreatedAt" varchar [not null]
+  "UpdatedAt" varchar [not null]
+
+  Indexes {
+    Id [name: "public_Episodes_index_4"]
+    PodcastId [name: "public_Episodes_index_5"]
+    (Id, PodcastId) [name: "public_idx_Episodes_Id_PodcastId"]
+  }
+}
+
+Table "PodcastStats" {
+  "PodcastId" varchar [not null]
+  "AverageRating" decimal [not null]
+  "RatingCount" int [not null]
+
+  Indexes {
+    PodcastId [pk]
+    PodcastId [name: "public_PodcastStats_index_12"]
+  }
+}
+
+Table "EpisodeStats" {
+  "Id" uniqueidentifier [not null]
+  "EpisodeId" varchar [not null]
+  "PlayCount" bigint [not null]
+  "TotalListenTime" int [not null]
+  "LikeCount" int [not null]
+  "Downloads" int [not null]
+  "Replays" varchar [not null]
+  "CompletionRate" decimal [not null]
+  "CommentsCount" int [not null]
+  "AvgListenDuration" decimal [not null]
+  "SkipCount" int [not null]
+
+  Indexes {
+    Id [pk]
+    EpisodeId [name: "public_EpisodeStats_index_9"]
+  }
+}
+
+Table "Reactions" {
+  "Id" uniqueidentifier [not null]
+  "ListenerId" uniqueidentifier [not null]
+  "EntityId" uniqueidentifier [not null]
+  "EntityType" nvarchar [not null]
+  "ReactionType" tinyint [not null]
+  "CreatedAt" datetime2 [not null]
+
+  Indexes {
+    Id [pk]
+  }
+}
+
+Table "Invitations" {
+  "Id" varchar [not null]
+  "PodcastId" varchar [not null]
+  "InvitedEmail" varchar [not null]
+  "InvitedById" varchar [not null]
+  "CreatedAt" varchar [not null]
+  "AcceptedAt" varchar [not null]
+  "Status" varchar [not null]
+  "ExpiresAt" varchar [not null]
+
+  Indexes {
+    Id [name: "public_Invitations_index_23"]
+    PodcastId [name: "public_Invitations_index_24"]
+    InvitedById [name: "public_Invitations_index_25"]
+    (Id, PodcastId, InvitedById) [name: "public_idx_Invitations_Id_PodcastId_InvitedById"]
+  }
+}
+
+Table "PodcastTags" {
+  "TagId" varchar [not null]
+  "PodcastId" varchar [not null]
+
+  Indexes {
+    TagId [name: "public_PodcastTags_index_6"]
+    PodcastId [name: "public_PodcastTags_index_7"]
+    (TagId, PodcastId) [name: "public_idx_PodcastTags_TagId_PodcastId"]
+  }
+}
+
+Table "PlaylistEpisodes" {
+  "PlayListId" uniqueidentifier [not null]
+  "EpisodeId" uniqueidentifier [not null]
+  "Order" int [not null]
+  "AddedAt" datetime2 [not null]
+
+  Indexes {
+    (PlayListId, EpisodeId) [pk]
+  }
+}
+
+Table "Analytics" {
+  "Id" varchar [not null]
+  "CreatorId" varchar [not null]
+  "PlayCount" bigint [not null]
+
+  Indexes {
+    Id [name: "public_Analytics_index_10"]
+    CreatorId [name: "public_Analytics_index_11"]
+    (Id, CreatorId) [name: "public_idx_Analytics_Id_CreatorId"]
+  }
+}
+
+Table "Playlists" {
+  "Id" uniqueidentifier [not null]
+  "ListenerId" uniqueidentifier [not null]
+  "Name" nvarchar(150) [not null]
+  "Description" nvarchar(500) [not null]
+  "IsPublic" bit [not null]
+  "CreatedAt" datetime2 [not null]
+  "UpdatedAt" datetime2 [not null]
+  "CoverImageUrl" nvarchar [not null]
+
+  Indexes {
+    Id [pk]
+  }
+}
+
+Table "PlaybackHistory" {
+  "Id" uniqueidentifier [not null]
+  "ListenerId" uniqueidentifier [not null]
+  "EpisodeId" uniqueidentifier [not null]
+  "PlayedAt" datetime2 [not null]
+
+  Indexes {
+    Id [pk]
+  }
+}
+
+Table "Users" {
+  "Id" uniqueidentifier [not null]
+
+  Indexes {
+    Id [pk]
+    Id [name: "public_Users_index_3"]
+  }
+}
+
+Table "Notifications" {
+  "Id" varchar [not null]
+  "UserId" varchar [not null]
+  "Message" varchar [not null]
+  "Type" varchar [not null]
+  "CreatedAt" varchar [not null]
+  "ReadStatus" varchar [not null]
+
+  Indexes {
+    Id [name: "public_Notifications_index_15"]
+    UserId [name: "public_Notifications_index_16"]
+    (Id, UserId) [name: "public_idx_Notifications_Id_UserId"]
+  }
+}
+
+Table "Tags" {
+  "Id" varchar [not null]
+  "Name" varchar [not null]
+
+  Indexes {
+    Id [pk]
+    Id [name: "public_Tags_index_8"]
+  }
+}
+
+Table "Podcasts" {
+  "Id" uniqueidentifier [not null]
+  "Title" varchar [not null]
+  "Description" text [not null]
+  "CoverImageUrl" text [not null]
+  "IsPublished" varchar [not null]
+  "CategoryId" uniqueidentifier [not null]
+  "Language" varchar [not null]
+  "TotalEpisodes" int [not null]
+  "Slug" varchar [not null]
+  "RssFeedUrl" text [not null]
+  "CreatorId" varchar [not null]
+  "CreatedAt" varchar [not null]
+  "UpdatedAt" varchar [not null]
+
+  Indexes {
+    (Id, CategoryId) [pk]
+    Id [name: "public_Podcasts_index_0"]
+    CategoryId [name: "public_Podcasts_index_1"]
+    CreatorId [name: "public_Podcasts_index_2"]
+    (Id, CategoryId, CreatorId) [name: "public_idx_Podcasts_Id_CategoryId_CreatorId"]
+  }
+}
+
+Table "Categories" {
+  "Id" varchar [not null]
+  "Name" varchar [not null]
+
+  Indexes {
+    Id [pk]
+    Id [name: "public_Categories_index_17"]
+  }
+}
+
+Table "SocialLinks" {
+  "Id" varchar [not null]
+  "CreatorId" varchar [not null]
+  "PlatformName" varchar [not null]
+  "Url" varchar [not null]
+
+  Indexes {
+    Id [name: "public_SocialLinks_index_19"]
+    CreatorId [name: "public_SocialLinks_index_20"]
+    (Id, CreatorId) [name: "public_idx_SocialLinks_Id_CreatorId"]
+  }
+}
+
+Table "Comments" {
+  "Id" uniqueidentifier [not null]
+  "ListenerId" uniqueidentifier [not null]
+  "ParentId" uniqueidentifier [not null]
+  "EntityId" uniqueidentifier [not null]
+  "EntityType" varchar [not null]
+  "Content" nvarchar [not null]
+  "CreatedAt" datetime2 [not null]
+
+  Indexes {
+    Id [pk]
+    Id [name: "public_Comments_index_13"]
+    Id [name: "public_idx_Comments_Id_EpisodeId"]
+  }
+}
+
+Table "PodcastRatings" {
+  "PodcastId" uniqueidentifier [not null]
+  "ListenerId" uniqueidentifier [not null]
+  "Rating" tinyint [not null]
+  "AddedAt" datetime2 [not null]
+
+  Indexes {
+    (PodcastId, ListenerId) [pk]
+  }
+}
+
+Ref "Analytics_CreatorId_Users_Id":"Users"."Id" < "Analytics"."CreatorId"
+
+Ref "Categories_Id_Podcasts_CategoryId":"Podcasts"."CategoryId" < "Categories"."Id"
+
+Ref "Comments_Id_fk":"Comments"."ParentId" < "Comments"."Id"
+
+Ref "Comments_ListenerId_fk":"Users"."Id" < "Comments"."ListenerId"
+
+Ref "Episodes_Id_EpisodeStats_EpisodeId":"EpisodeStats"."EpisodeId" < "Episodes"."Id"
+
+Ref "Invitations_InvitedById_Users_Id":"Users"."Id" < "Invitations"."InvitedById"
+
+Ref "Invitations_PodcastId_Podcasts_Id":"Podcasts"."Id" < "Invitations"."PodcastId"
+
+Ref "ListeningProgress_EpisodeId_fk":"Episodes"."Id" < "ListeningProgress"."EpisodeId"
+
+Ref "ListeningProgress_ListenerId_fk":"Users"."Id" < "ListeningProgress"."ListenerId"
+
+Ref "Notifications_UserId_Users_Id":"Users"."Id" < "Notifications"."UserId"
+
+Ref "PlaybackHistory_EpisodeId_fk":"Episodes"."Id" < "PlaybackHistory"."EpisodeId"
+
+Ref "PlaybackHistory_ListenerId_fk":"Users"."Id" < "PlaybackHistory"."ListenerId"
+
+Ref "PodcastRatings_ListenerId_fk":"Users"."Id" < "PodcastRatings"."ListenerId"
+
+Ref "PodcastRatings_PodcastId_fk":"Podcasts"."Id" < "PodcastRatings"."PodcastId"
+
+Ref "Podcasts_CreatorId_Users_Id":"Users"."Id" < "Podcasts"."CreatorId"
+
+Ref "Podcasts_Id_Episodes_PodcastId":"Episodes"."PodcastId" < "Podcasts"."Id"
+
+Ref "Podcasts_Id_PodcastTags_PodcastId":"PodcastTags"."PodcastId" < "Podcasts"."Id"
+
+Ref "PodcastStats_PodcastId_Podcasts_Id":"Podcasts"."Id" < "PodcastStats"."PodcastId"
+
+Ref "Profile_CreatorId_Users_Id":"Users"."Id" < "Profile"."CreatorId"
+
+Ref "SocialLinks_CreatorId_Profile_CreatorId":"Profile"."CreatorId" < "SocialLinks"."CreatorId"
+
+Ref "Subscriptions_UserId_Users_Id":"Users"."Id" < "Subscriptions"."ListenerId"
+
+Ref "Tags_Id_PodcastTags_TagId":"PodcastTags"."TagId" < "Tags"."Id"
+
+Ref "Comments_EntityId_fk":"Episodes"."Id" < "Comments"."EntityId"
+
+Ref "Playlists_ListenerId_fk":"Users"."Id" < "Playlists"."ListenerId"
+
+Ref "PlaylistEpisodes_PlayListId_fk":"Playlists"."Id" < "PlaylistEpisodes"."PlayListId"
+
+Ref "PlaylistEpisodes_EpisodeId_fk":"Episodes"."Id" < "PlaylistEpisodes"."EpisodeId"
+
+Ref "Reactions_ListenerId_fk":"Users"."Id" < "Reactions"."ListenerId"
+
+Ref "Reactions_EntityId_fk":"EpisodeStats"."Id" < "Reactions"."EntityId"
+
+Ref "Reactions_EntityId_fk":"Comments"."Id" < "Reactions"."EntityId"

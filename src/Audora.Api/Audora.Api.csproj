@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <InvariantGlobalization>true</InvariantGlobalization>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Controllers\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Audora.Application\Audora.Application.csproj" />
+      <ProjectReference Include="..\Audora.Contracts\Audora.Contracts.csproj" />
+      <ProjectReference Include="..\Audora.Infrastructure\Audora.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>
