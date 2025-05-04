@@ -1,10 +1,12 @@
 using Audora.Contracts.Episodes;
+using Audora.Contracts.Episodes.Requests;
 
 namespace Audora.Contracts.Podcasts.Requests;
 
 public class CreatePodcastRequest
 {
     public Guid CreatorId { get; init; }
+    public string CreatorName { get; init; } = null!;
     public string Name { get; init; } = null!;
     public string Description { get; init; } = null!;
     public string? CoverImageUrl { get; init; }

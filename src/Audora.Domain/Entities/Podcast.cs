@@ -6,36 +6,45 @@ public class Podcast : Entity
 {
     private const int MaxTagsNumber = 10;
 
-    public string Name { get; init; } = null!;
-    public string Description { get; init; } = null!;
-    public string? CoverImageUrl { get; init; }
-    public bool IsPublished { get; private set; }
-    public string Category { get; init; } = null!;
-    public string Language { get; init; } = null!;
-    public int TotalEpisodes { get; private set; }
-    public string Slug { get; } = null!;     // TODO construct from podcast name.
-    public string? RssFeedUrl { get; private set; }
     public Guid CreatorId { get; init; }
+    public string Name { get; private set; } = null!;
+    public string Description { get; private set; } = null!;
+    public string? CoverImageUrl { get; private set; }
+    public bool IsPublished { get; private set; }
+    public string Category { get; private set; } = null!;
+    public string Language { get; private set; } = null!;
+    public int TotalEpisodes { get; private set; }
+    public float AverageRating { get; private set; }
+
+    public string Slug => Name.ToLower().Replace(' ', '-');
 
     public ICollection<Episode> Episodes { get; } = [];
     public ICollection<Tag> Tags { get; private set; } = [];
 
-    public Podcast(
+    public static Podcast Create(
         string name,
         string description,
         bool isPublished,
         string category,
         string language,
+        string[]? tags,
         Guid creatorId,
-        string? coverImageUrl = null)
+        string? coverImageUrl = null,
+        ICollection<Episode>? episodes = null)
     {
-        Name = name;
-        Description = description;
-        CoverImageUrl = coverImageUrl;
-        IsPublished = isPublished;
-        Category = category;
-        Language = language;
-        CreatorId = creatorId;
+        var podcast = new Podcast
+        {
+            Name = name,
+            Description = description,
+            CoverImageUrl = coverImageUrl,
+            IsPublished = isPublished,
+            Category = category,
+            Language = language,
+            CreatorId = creatorId
+        };
+
+        podcast.SetTags(tags ?? []); // TODO handle & return error.
+        return podcast;
     }
 
     private Podcast()
@@ -58,7 +67,7 @@ public class Podcast : Entity
         IsPublished = false;
     }
 
-    public void AddTags(string[] tags)
+    public void SetTags(string[] tags)
     {
         // TODO maybe add tags repository to handle new tags.
 
@@ -75,5 +84,18 @@ public class Podcast : Entity
     {
         Episodes.Add(episode);
         TotalEpisodes++;
+    }
+
+    public void UpdateAverageRating(float newAverageRating) => AverageRating = newAverageRating;
+
+    public void Update(Podcast podcastToUpdate)
+    {
+        Name = podcastToUpdate.Name;
+        Description = podcastToUpdate.Description;
+        CoverImageUrl = podcastToUpdate.CoverImageUrl;
+        IsPublished = podcastToUpdate.IsPublished;
+        Category = podcastToUpdate.Category;
+        Language = podcastToUpdate.Language;
+        Tags = podcastToUpdate.Tags;
     }
 }

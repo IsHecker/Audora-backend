@@ -13,8 +13,8 @@ public class Episode : Entity
     public string PodcastName { get; init; } = null!;
     public bool IsPublished { get; init; }
     public int EpisodeNumber { get; init; }
-    public string Slug { get; } = null!;     // TODO construct from podcast name.
-    public DateTime ReleaseDate { get; init; }      // The date when it's published
+    public DateTime ReleaseDate { get; init; } // The date when it's published
+    public string Slug => Name.ToLower().Replace(' ', '-');
 
 
     public Episode(

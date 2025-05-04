@@ -17,7 +17,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Podcasts\Queries\" />
+      <Folder Include="Analytics\Commands\" />
+      <Folder Include="Common\Abstractions\" />
+      <Folder Include="PlaybackSessions\Queries\" />
     </ItemGroup>
 
 </Project>
