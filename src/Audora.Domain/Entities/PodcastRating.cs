@@ -2,7 +2,7 @@ using Audora.Domain.Common;
 
 namespace Audora.Domain.Entities;
 
-public class PodcastRating
+public class PodcastRating : Entity
 {
     public Guid PodcastId { get; init; }
     public Guid ListenerId { get; init; }

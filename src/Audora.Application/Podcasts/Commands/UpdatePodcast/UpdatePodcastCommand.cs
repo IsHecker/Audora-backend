@@ -2,7 +2,6 @@ using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Results;
 using Audora.Domain.Entities;
-using MediatR;
 
 namespace Audora.Application.Podcasts.Commands.UpdatePodcast;
 

@@ -2,8 +2,16 @@ namespace Audora.Contracts.Podcasts.Responses;
 
 public class PodcastResponse
 {
-    public bool IsFollowed { get; init; }
+    public Guid Id { get; init; }
+    public Guid CreatorId { get; init; }
+    public string Name { get; init; } = null!;
+    public string Description { get; init; } = null!;
+    public string? CoverImageUrl { get; init; }
+    public string Category { get; init; } = null!;
+    public string Language { get; init; } = null!;
+    public int TotalEpisodes { get; init; }
+    public bool? IsFollowed { get; init; }
     public byte? UserRating { get; init; }
-    public decimal AverageRating { get; init; }
-    public int TotalRatings { get; init; }
+    public float? AverageRating { get; init; }
+    public int? TotalRatings { get; init; }
 }

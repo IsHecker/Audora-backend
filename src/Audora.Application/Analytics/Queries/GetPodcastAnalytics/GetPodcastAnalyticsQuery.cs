@@ -1,6 +1,6 @@
 using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Application.Common.Abstractions.Messaging;
-using Audora.Application.Common.Mapping;
+using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Results;
 using Audora.Contracts.Analytics.Responses;
 using Audora.Domain.Entities;
@@ -30,9 +30,9 @@ public class GetPodcastAnalyticsQueryHandler : IQueryHandler<GetPodcastAnalytics
 
         var podcastStat = await _podcastStatRepository
             .IncludePodcast()
-            .GetPodcastStatByPodcastIdAsync(request.PodcastId);
+            .GetByPodcastIdAsync(request.PodcastId);
 
-        var episodeStats = await _episodeStatRepository.GetEpisodeStatsByPodcastStateId(request.PodcastId);
+        var episodeStats = await _episodeStatRepository.GetAllByPodcastStateId(request.PodcastId);
 
         return podcastStat.ToResponse(episodeStats);
     }

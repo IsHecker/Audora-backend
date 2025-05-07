@@ -4,7 +4,7 @@ namespace Audora.Application.Common.Abstractions.Interfaces;
 
 public interface IEpisodeStatRepository
 {
-    Task<EpisodeStat> GetEpisodeStatByEpisodeIdAsync(Guid episodeId);
-    Task<IQueryable<EpisodeStat>> GetEpisodeStatsByPodcastStateId(Guid podcastStatId);
-    Task<IQueryable<EpisodeStat>> GetStatsByEpisodeIdsAsync(IEnumerable<Guid> episodeIds);
+    Task<EpisodeStat> GetByEpisodeIdAsync(Guid episodeId);
+    Task<IQueryable<EpisodeStat>> GetAllByPodcastStateId(Guid podcastStatId);
+    Task<IQueryable<EpisodeStat>> GetAllByEpisodeIdsAsync(IEnumerable<Guid> episodeIds);
 }

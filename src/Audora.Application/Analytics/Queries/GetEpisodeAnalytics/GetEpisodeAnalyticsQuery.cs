@@ -24,7 +24,7 @@ public class GetEpisodeAnalyticsQueryHandler : IQueryHandler<GetEpisodeAnalytics
     {
         // TODO return error when PodcastStat id doesn't exist.
 
-        return (await _episodeStatRepository.GetEpisodeStatsByPodcastStateId(request.PodcastStatId))
+        return (await _episodeStatRepository.GetAllByPodcastStateId(request.PodcastStatId))
             .Paginate(request.Pagination).ToResult<IEnumerable<EpisodeStat>>();
     }
 }

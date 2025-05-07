@@ -24,7 +24,7 @@ public class UnitOfWorkBehaviour<TRequest, TResponse> :
         using (var transactionScope = new TransactionScope())
         {
             var response = await next(cancellationToken);
-            await _unitOfWork.CommitChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             transactionScope.Complete();
 

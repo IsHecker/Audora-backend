@@ -14,7 +14,7 @@ public class ReactionTogglerService
 
     public async Task<bool> ToggleReactionAsync(Reaction reaction)
     {
-        var listenerReaction = await _reactionRepository.GetByListenerIdAsync(reaction.ListenerId);
+        var listenerReaction = await _reactionRepository.GetAsync(reaction.ListenerId, reaction.EntityId);
         if (listenerReaction is null)
         {
             await _reactionRepository.AddAsync(reaction);

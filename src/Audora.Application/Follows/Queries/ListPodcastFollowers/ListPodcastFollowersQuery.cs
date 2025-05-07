@@ -23,7 +23,9 @@ public class ListPodcastFollowersQueryHandler : IQueryHandler<ListPodcastFollowe
     public async Task<Result<IEnumerable<User>>> Handle(ListPodcastFollowersQuery request,
         CancellationToken cancellationToken)
     {
-        var followerIds = (await _followRepository.GetFollowsByEntityIdAsync(request.PodcastId)).Select(f => f.FollowerId);
+        var followerIds = (await _followRepository.GetAllByEntityIdAsync(request.PodcastId))
+            .Select(f => f.FollowerId);
+        
         return (await _userService.GetUsersByIdsAsync(followerIds)).ToResult<IEnumerable<User>>();
     }
 }

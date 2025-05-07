@@ -26,7 +26,7 @@ public class SearchQueryHandler : IQueryHandler<SearchQuery, SearchResults>
     {
         var filter = request.Filter;
 
-        var podcasts = (await _podcastRepository.GetPodcastsAsync())
+        var podcasts = (await _podcastRepository.GetAllAsync())
             .FilterBy(p => p.Name, filter.Name)
             .FilterBy(p => p.Category, filter.Category)
             .FilterBy(p => p.Language, filter.Language)
@@ -36,7 +36,7 @@ public class SearchQueryHandler : IQueryHandler<SearchQuery, SearchResults>
             .Paginate(filter.Pagination)
             .ApplySorting(filter.SortField, filter.SortOrder);
 
-        var episodes = (await _episodeRepository.GetEpisodesAsync())
+        var episodes = (await _episodeRepository.GetAllAsync())
             .FilterBy(e => e.Name, filter.Name)
             .Paginate(filter.Pagination)
             .ApplySorting(filter.SortField, filter.SortOrder);

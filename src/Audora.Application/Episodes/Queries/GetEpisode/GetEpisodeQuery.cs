@@ -1,6 +1,6 @@
 using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Application.Common.Abstractions.Messaging;
-using Audora.Application.Common.Mapping;
+using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Results;
 using Audora.Contracts.Episodes.Responses;
 using Audora.Domain.Entities;
@@ -32,9 +32,9 @@ public class GetEpisodeQueryHandler : IQueryHandler<GetEpisodeQuery, EpisodeResp
             return Error.NotFound(description: $"Episode with Id '{request.EpisodeId}' is not found.");
         }
 
-        var episodeState = await _episodeStatRepository.GetEpisodeStatByEpisodeIdAsync(request.EpisodeId);
+        var episodeState = await _episodeStatRepository.GetByEpisodeIdAsync(request.EpisodeId);
 
-        var listenerReaction = await _reactionRepository.GetByListenerIdAsync(request.ListenerId);
+        var listenerReaction = await _reactionRepository.GetAsync(request.ListenerId, request.EpisodeId);
 
         return episode.ToResponse(episodeState, listenerReaction);
     }

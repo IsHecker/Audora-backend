@@ -1,4 +1,5 @@
 using Audora.Application.Common.Behaviours;
+using Audora.Application.Common.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Audora.Application;
@@ -13,6 +14,9 @@ public static class DependencyInjection
 
             options.AddOpenBehavior(typeof(UnitOfWorkBehaviour<,>));
         });
+
+        services.AddScoped<ReactionTogglerService>();
+        services.AddScoped<PodcastViewService>();
 
         return services;
     }

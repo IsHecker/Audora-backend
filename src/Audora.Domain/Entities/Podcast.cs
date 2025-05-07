@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Audora.Domain.Common;
 
 namespace Audora.Domain.Entities;
@@ -15,10 +16,13 @@ public class Podcast : Entity
     public string Language { get; private set; } = null!;
     public int TotalEpisodes { get; private set; }
     public float AverageRating { get; private set; }
+    public int TotalRatings { get; private set; }
 
     public string Slug => Name.ToLower().Replace(' ', '-');
 
     public ICollection<Episode> Episodes { get; } = [];
+    
+    [NotMapped]
     public ICollection<Tag> Tags { get; private set; } = [];
 
     public static Podcast Create(
@@ -87,6 +91,7 @@ public class Podcast : Entity
     }
 
     public void UpdateAverageRating(float newAverageRating) => AverageRating = newAverageRating;
+    public void UpdateTotalRating(int newTotalRatings) => TotalRatings = newTotalRatings;
 
     public void Update(Podcast podcastToUpdate)
     {

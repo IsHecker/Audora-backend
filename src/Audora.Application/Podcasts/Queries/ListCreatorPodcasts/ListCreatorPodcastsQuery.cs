@@ -24,7 +24,7 @@ public class ListCreatorPodcastsQueryHandler : IQueryHandler<ListCreatorPodcasts
     {
         var podcasts = await _podcastRepository
             .IncludeEpisodes(request.IncludeEpisodes)
-            .GetPodcastsAsync();
+            .GetAllAsync();
 
         return podcasts.Where(podcast => podcast.CreatorId == request.CreatorId)
             .Paginate(request.Pagination)

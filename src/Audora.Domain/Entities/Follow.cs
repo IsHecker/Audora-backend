@@ -9,12 +9,12 @@ public class Follow : Entity
     public FollowTarget FollowTarget { get; init; }
     public DateTime FollowedAt { get; init; }
 
-    public Follow(Guid followerId, Guid entityId, FollowTarget followTarget, DateTime followedAt)
+    public Follow(Guid followerId, Guid entityId, FollowTarget followTarget)
     {
         FollowerId = followerId;
         EntityId = entityId;
         FollowTarget = followTarget;
-        FollowedAt = followedAt;
+        FollowedAt = DateTime.UtcNow;
     }
 
     private Follow()

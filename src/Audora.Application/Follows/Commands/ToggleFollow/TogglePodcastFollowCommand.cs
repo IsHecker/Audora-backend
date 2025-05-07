@@ -1,6 +1,7 @@
 using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Results;
+using Audora.Domain.Entities;
 using MediatR;
 
 namespace Audora.Application.Follows.Commands.ToggleFollow;
@@ -21,22 +22,24 @@ public class TogglePodcastFollowCommandHandler : ICommandHandler<TogglePodcastFo
 
     public async Task<Result> Handle(TogglePodcastFollowCommand request, CancellationToken cancellationToken)
     {
-        var follow = (await _followRepository.GetUserFollows(request.FollowerId))
+        var listenerFollow = (await _followRepository.GetListenerFollows(request.FollowerId))
             .FirstOrDefault(f => f.EntityId == request.PodcastId);
 
-        var podcastStat = await _podcastStatRepository.GetPodcastStatByPodcastIdAsync(request.PodcastId);
+        var podcastStat = await _podcastStatRepository.GetByPodcastIdAsync(request.PodcastId);
 
-        if (follow is null)
+        if (listenerFollow is null)
         {
-            await _followRepository.AddAsync(request.FollowerId, request.PodcastId);
+            var newFollow = new Follow(request.FollowerId, request.PodcastId, FollowTarget.Podcast);
+
+            await _followRepository.AddAsync(newFollow);
             podcastStat.AddFollower();
-            
+
             return Result.Success;
         }
-        
-        await _followRepository.DeleteFollowAsync(request.FollowerId, request.PodcastId);
+
+        await _followRepository.DeleteAsync(listenerFollow);
         podcastStat.RemoveFollower();
-        
+
         return Result.Success;
     }
 }

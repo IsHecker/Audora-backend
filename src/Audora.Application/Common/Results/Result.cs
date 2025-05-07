@@ -83,12 +83,12 @@ public class Result<TValue> : Result
         return IsSuccess ? onSuccess(_value) : onFailure(Errors[0]);
     }
 
-    public TResult Match<TResult>(Func<TValue, TResult> onSuccess, Func<IReadOnlyList<Error>, TResult> onFailure)
+    public TResult Match<TResult>(Func<TValue, TResult> onSuccess, Func<List<Error>, TResult> onFailure)
     {
         return IsSuccess ? onSuccess(_value) : onFailure(Errors);
     }
 
-    public void Match(Action<TValue> onSuccess, Action<IReadOnlyList<Error>> onFailure)
+    public void Match(Action<TValue> onSuccess, Action<List<Error>> onFailure)
     {
         if (IsSuccess)
             onSuccess(_value);
