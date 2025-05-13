@@ -10,5 +10,4 @@ public class PodcastAnalyticsResponse
     public int TotalReturningListeners { get; init; }
     public float RetentionRate { get; init; }
     public long TotalListeningTime { get; init; }
-    public IEnumerable<EpisodeAnalyticsResponse>? EpisodesAnalytics { get; init; }
 }

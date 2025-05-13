@@ -1,30 +1,32 @@
-using Audora.Application.Common;
 using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Application.Common.Abstractions.Messaging;
-using Audora.Application.Common.Models;
+using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Results;
-using Audora.Domain.Entities;
-using MediatR;
+using Audora.Contracts.Analytics.Responses;
 
 namespace Audora.Application.Analytics.Queries.GetEpisodeAnalytics;
 
-public record GetEpisodeAnalyticsQuery(Guid PodcastStatId, Pagination Pagination) : IQuery<IEnumerable<EpisodeStat>>;
+public record GetEpisodeAnalyticsQuery(Guid EpisodeId) : IQuery<EpisodeAnalyticsResponse>;
 
-public class GetEpisodeAnalyticsQueryHandler : IQueryHandler<GetEpisodeAnalyticsQuery, IEnumerable<EpisodeStat>>
+public class GetEpisodeAnalyticsQueryHandler : IQueryHandler<GetEpisodeAnalyticsQuery, EpisodeAnalyticsResponse>
 {
     private readonly IEpisodeStatRepository _episodeStatRepository;
+    private readonly IEngagementStatRepository _engagementStatRepository;
 
-    public GetEpisodeAnalyticsQueryHandler(IEpisodeStatRepository episodeStatRepository)
+    public GetEpisodeAnalyticsQueryHandler(IEpisodeStatRepository episodeStatRepository,
+        IEngagementStatRepository engagementStatRepository)
     {
         _episodeStatRepository = episodeStatRepository;
+        _engagementStatRepository = engagementStatRepository;
     }
 
-    public async Task<Result<IEnumerable<EpisodeStat>>> Handle(GetEpisodeAnalyticsQuery request,
+    public async Task<Result<EpisodeAnalyticsResponse>> Handle(GetEpisodeAnalyticsQuery request,
         CancellationToken cancellationToken)
     {
         // TODO return error when PodcastStat id doesn't exist.
 
-        return (await _episodeStatRepository.GetAllByPodcastStateId(request.PodcastStatId))
-            .Paginate(request.Pagination).ToResult<IEnumerable<EpisodeStat>>();
+        var episodeStat = await _episodeStatRepository.GetByEpisodeIdAsync(request.EpisodeId);
+        var engagementsStat = await _engagementStatRepository.GetByEntityIdAsync(request.EpisodeId);
+        return episodeStat.ToResponse(engagementsStat);
     }
 }

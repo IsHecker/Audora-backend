@@ -7,7 +7,11 @@ public class EpisodeAnalyticsResponse
     public int Likes { get; init; }
     public int Dislikes { get; init; }
     public int Comments { get; init; }
-    public int Replays { get; init; }
     public int Downloads { get; init; }
-    public long ListeningTime { get; init; }
+    
+    public int? Replays { get; init; }
+    public int? Shares { get; init; }
+    public int? Bookmarks { get; init; }
+    public long? ListeningTime { get; init; }
 }
+

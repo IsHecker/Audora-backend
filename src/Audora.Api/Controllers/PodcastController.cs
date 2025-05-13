@@ -1,4 +1,6 @@
 using Audora.Application.Common.Models;
+using Audora.Application.Podcasts.Queries.GetPodcastById;
+using Audora.Application.Podcasts.Queries.ListCreatorPodcasts;
 using Audora.Application.Podcasts.Queries.ListPodcasts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +16,28 @@ public class PodcastController : ApiController
         _sender = sender;
     }
 
+
     [HttpGet(ApiEndpoints.Podcasts.List)]
     public async Task<IActionResult> ListPodcasts([FromQuery] Pagination pagination)
     {
-        var query = new ListPodcastsQuery(Guid.Parse("735331aa-72c7-4d48-a092-a0ce72a6c49e"), pagination);
+        var query = new ListPodcastsQuery(ListenerId, pagination);
         var listPodcastsResult = await _sender.Send(query);
         return listPodcastsResult.Match(Ok, Problem);
+    }
+
+    [HttpGet(ApiEndpoints.Podcasts.GetById)]
+    public async Task<IActionResult> GetPodcastById(Guid podcastId)
+    {
+        var query = new GetPodcastByIdQuery(podcastId, ListenerId);
+        var getPodcastResult = await _sender.Send(query);
+        return getPodcastResult.Match(Ok, Problem);
+    }
+
+    [HttpGet(ApiEndpoints.Creators.ListCreatorPodcasts)]
+    public async Task<IActionResult> ListCreatorPodcasts(Guid creatorId, [FromQuery] Pagination pagination)
+    {
+        var query = new ListCreatorPodcastsQuery(creatorId, false, pagination);
+        var listResult = await _sender.Send(query);
+        return listResult.Match(Ok, Problem);
     }
 }

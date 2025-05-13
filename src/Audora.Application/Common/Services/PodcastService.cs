@@ -5,12 +5,12 @@ using Audora.Domain.Entities;
 
 namespace Audora.Application.Common.Services;
 
-public class PodcastViewService
+public class PodcastService
 {
     private readonly IFollowRepository _followRepository;
     private readonly IPodcastRatingRepository _ratingRepository;
 
-    public PodcastViewService(IFollowRepository followRepository, IPodcastRatingRepository ratingRepository)
+    public PodcastService(IFollowRepository followRepository, IPodcastRatingRepository ratingRepository)
     {
         _followRepository = followRepository;
         _ratingRepository = ratingRepository;
@@ -22,11 +22,11 @@ public class PodcastViewService
 
         var isFollowingSet = (await _followRepository.GetListenerFollowsByEntityIds(listenerId, podcastIds))
             .Select(f => f.EntityId).ToHashSet();
-        
+
         var userRatingDict = (await _ratingRepository.GetAllByListenerIdAsync(listenerId))
             .Where(r => podcastIds.Contains(r.PodcastId))
             .ToDictionary(r => r.PodcastId, r => r.Rating);
 
-        return podcasts.ToResponse(isFollowingSet, userRatingDict);
+        return podcasts.WithListenerMetaData(isFollowingSet, userRatingDict).ToResponse();
     }
 }

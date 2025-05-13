@@ -7,13 +7,11 @@ public class EpisodeStat : Entity
     public Guid PodcastStatId { get; init; }
     public Guid EpisodeId { get; init; }
 
+    public string EpisodeName  { get; init; }
     public long ListeningTime { get; private set; }
     public int PlayCount { get; private set; }
     public int Shares { get; private set; }
     public int Bookmarks { get; private set; }
-    public int Likes { get; private set; }
-    public int Dislikes { get; private set; }
-    public int Comments { get; private set; }
     public int Replays { get; private set; }
     public int Downloads { get; private set; }
 
@@ -22,24 +20,20 @@ public class EpisodeStat : Entity
 
     public EpisodeStat(
         Guid episodeId,
+        string episodeName,
         int shares,
         int bookmarks,
         int listeningTime = 0,
         int playCount = 0,
-        int likes = 0,
-        int dislikes = 0,
-        int comments = 0,
         int replays = 0,
         int downloads = 0)
     {
         EpisodeId = episodeId;
+        EpisodeName = episodeName;
         Shares = shares;
         Bookmarks = bookmarks;
         ListeningTime = listeningTime;
         PlayCount = playCount;
-        Likes = likes;
-        Dislikes = dislikes;
-        Comments = comments;
         Replays = replays;
         Downloads = downloads;
     }

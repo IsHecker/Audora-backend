@@ -17,12 +17,12 @@ public abstract class Repository<T> where T : Entity
 
     public virtual Task<IQueryable<T>> GetAllAsync()
     {
-        return Task.FromResult(Context.Set<T>().AsQueryable());
+        return Task.FromResult(Query);
     }
 
     public virtual async Task<T?> GetByIdAsync(Guid id)
     {
-        return await Context.Set<T>().FirstOrDefaultAsync(entity => entity.Id == id);
+        return await Query.FirstOrDefaultAsync(entity => entity.Id == id);
     }
 
     public virtual async Task AddAsync(T entity)
@@ -38,11 +38,11 @@ public abstract class Repository<T> where T : Entity
 
     public virtual async Task<bool> DeleteAsync(Guid id)
     {
-        return await Context.Set<T>().Where(e => e.Id == id).ExecuteDeleteAsync() > 0;
+        return await Query.Where(e => e.Id == id).ExecuteDeleteAsync() > 0;
     }
 
     public virtual async Task<bool> DeleteAsync(T entity)
     {
-        return await Context.Set<T>().Where(e => e.Id == entity.Id).ExecuteDeleteAsync() > 0;
+        return await Query.Where(e => e.Id == entity.Id).ExecuteDeleteAsync() > 0;
     }
 }

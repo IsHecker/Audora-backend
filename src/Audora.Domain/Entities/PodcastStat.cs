@@ -17,7 +17,7 @@ public class PodcastStat : Entity
     public long TotalListeningTime { get; private set; }
 
     public Podcast Podcast { get; init; } = null!;
-    public ICollection<EpisodeStat> EpisodesStats { get; private set; } = [];
+    // public ICollection<EpisodeStat> EpisodesStats { get; private set; } = [];
 
     public PodcastStat(Guid podcastId, float averageRating, int totalRatings, long totalPlays, long totalFollowers,
         float retentionRate, long totalListeningTime)

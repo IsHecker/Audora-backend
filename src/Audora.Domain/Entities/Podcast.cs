@@ -20,7 +20,7 @@ public class Podcast : Entity
 
     public string Slug => Name.ToLower().Replace(' ', '-');
 
-    public ICollection<Episode> Episodes { get; } = [];
+    public ICollection<Episode>? Episodes { get; } = [];
     
     [NotMapped]
     public ICollection<Tag> Tags { get; private set; } = [];

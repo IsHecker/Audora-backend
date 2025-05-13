@@ -16,7 +16,8 @@ public static class DependencyInjection
         });
 
         services.AddScoped<ReactionTogglerService>();
-        services.AddScoped<PodcastViewService>();
+        services.AddScoped<PodcastService>();
+        services.AddScoped<EpisodeResponseAttacher>();
 
         return services;
     }

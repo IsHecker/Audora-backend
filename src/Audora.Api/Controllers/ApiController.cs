@@ -6,6 +6,8 @@ namespace Audora.Api.Controllers;
 
 public class ApiController : ControllerBase
 {
+    protected readonly Guid ListenerId = Guid.Parse("735331aa-72c7-4d48-a092-a0ce72a6c49e");
+    
     protected IActionResult Problem(List<Error> errors)
     {
         if (errors.Count is 0)

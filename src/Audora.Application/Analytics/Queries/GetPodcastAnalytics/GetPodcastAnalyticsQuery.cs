@@ -32,8 +32,6 @@ public class GetPodcastAnalyticsQueryHandler : IQueryHandler<GetPodcastAnalytics
             .IncludePodcast()
             .GetByPodcastIdAsync(request.PodcastId);
 
-        var episodeStats = await _episodeStatRepository.GetAllByPodcastStateId(request.PodcastId);
-
-        return podcastStat.ToResponse(episodeStats);
+        return podcastStat.ToResponse();
     }
 }

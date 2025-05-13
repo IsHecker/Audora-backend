@@ -16,6 +16,7 @@ public class Episode : Entity
     public DateTime ReleaseDate { get; init; } // The date when it's published
     public string Slug => Name.ToLower().Replace(' ', '-');
 
+    public ICollection<Playlist> Playlists { get; init; }
 
     public Episode(
         string name,

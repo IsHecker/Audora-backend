@@ -1,3 +1,6 @@
+using Audora.Contracts.Common;
+using Audora.Contracts.Episodes.Responses;
+
 namespace Audora.Contracts.Podcasts.Responses;
 
 public class PodcastResponse
@@ -10,8 +13,8 @@ public class PodcastResponse
     public string Category { get; init; } = null!;
     public string Language { get; init; } = null!;
     public int TotalEpisodes { get; init; }
-    public bool? IsFollowed { get; init; }
-    public byte? UserRating { get; init; }
+    public bool? IsFollowed { get; set; }
+    public byte? UserRating { get; set; }
     public float? AverageRating { get; init; }
     public int? TotalRatings { get; init; }
 }

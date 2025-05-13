@@ -14,12 +14,12 @@ public record ListPodcastsQuery(Guid ListenerId, Pagination Pagination) : IQuery
 public class ListPodcastsQueryHandler : IQueryHandler<ListPodcastsQuery, PodcastsResponse>
 {
     private readonly IPodcastRepository _podcastRepository;
-    private readonly PodcastViewService _podcastViewService;
+    private readonly PodcastService _podcastService;
 
-    public ListPodcastsQueryHandler(IPodcastRepository podcastRepository, PodcastViewService podcastViewService)
+    public ListPodcastsQueryHandler(IPodcastRepository podcastRepository, PodcastService podcastService)
     {
         _podcastRepository = podcastRepository;
-        _podcastViewService = podcastViewService;
+        _podcastService = podcastService;
     }
 
     public async Task<Result<PodcastsResponse>> Handle(ListPodcastsQuery request,
@@ -30,6 +30,6 @@ public class ListPodcastsQueryHandler : IQueryHandler<ListPodcastsQuery, Podcast
 
         var podcasts = (await _podcastRepository.GetAllAsync()).Paginate(request.Pagination);
 
-        return await _podcastViewService.AttachListenerMetadataAsync(podcasts, request.ListenerId);
+        return await _podcastService.AttachListenerMetadataAsync(podcasts, request.ListenerId);
     }
 }

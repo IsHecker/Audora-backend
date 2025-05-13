@@ -1,10 +1,11 @@
+using Audora.Contracts.Analytics.Responses;
 using Audora.Contracts.Reactions.Responses;
 
 namespace Audora.Contracts.Episodes.Responses;
 
 public class EpisodeResponse
 {
-    public Guid PodcastId { get; init; }
+    public Guid Id { get; init; }
     public string PodcastName { get; init; } = null!;
     public string Name { get; init; } = null!;
     public string Description { get; init; } = null!;
@@ -13,5 +14,6 @@ public class EpisodeResponse
     public Guid AudioFileId { get; init; }
     public int EpisodeNumber { get; init; }
     public DateTime ReleaseDate { get; init; }
-    public EpisodeEngagementStatResponse EngagementStat  { get; init; } = null!;
+    public ListenerReactionResponse? ListenerReaction { get; set; }
+    public EpisodeAnalyticsResponse? EpisodeStat { get; set; }
 }
