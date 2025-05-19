@@ -4,14 +4,15 @@ using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
 using Audora.Application.Common.Results;
+using Audora.Contracts.Common;
 using Audora.Contracts.Podcasts.Responses;
 
 namespace Audora.Application.Podcasts.Queries.ListCreatorPodcasts;
 
-public record ListCreatorPodcastsQuery(Guid CreatorId, bool IncludeEpisodes, Pagination Pagination)
-    : IQuery<PodcastsResponse>;
+public record ListCreatorPodcastsQuery(Guid CreatorId, Pagination Pagination)
+    : IQuery<PagedResponse<PodcastResponse>>;
 
-public class ListCreatorPodcastsQueryHandler : IQueryHandler<ListCreatorPodcastsQuery, PodcastsResponse>
+public class ListCreatorPodcastsQueryHandler : IQueryHandler<ListCreatorPodcastsQuery, PagedResponse<PodcastResponse>>
 {
     private readonly IPodcastRepository _podcastRepository;
 
@@ -20,15 +21,16 @@ public class ListCreatorPodcastsQueryHandler : IQueryHandler<ListCreatorPodcasts
         _podcastRepository = podcastRepository;
     }
 
-    public async Task<Result<PodcastsResponse>> Handle(ListCreatorPodcastsQuery request,
+    public async Task<Result<PagedResponse<PodcastResponse>>> Handle(ListCreatorPodcastsQuery request,
         CancellationToken cancellationToken)
     {
-        var podcasts = await _podcastRepository
-            .IncludeEpisodes(request.IncludeEpisodes)
-            .GetAllAsync();
+        var podcasts = await _podcastRepository.GetAllAsync();
 
-        return podcasts.Where(podcast => podcast.CreatorId == request.CreatorId)
+        var creatorPodcasts = podcasts.Where(podcast => podcast.CreatorId == request.CreatorId);
+
+        return creatorPodcasts
             .Paginate(request.Pagination)
-            .ToResponse();
+            .ToResponse()
+            .ToPagedResponse(request.Pagination, creatorPodcasts.Count());
     }
 }

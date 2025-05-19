@@ -13,7 +13,7 @@ public class PodcastResponse
     public string Category { get; init; } = null!;
     public string Language { get; init; } = null!;
     public int TotalEpisodes { get; init; }
-    public bool? IsFollowed { get; set; }
+    public bool? IsFollowing { get; set; }
     public byte? UserRating { get; set; }
     public float? AverageRating { get; init; }
     public int? TotalRatings { get; init; }

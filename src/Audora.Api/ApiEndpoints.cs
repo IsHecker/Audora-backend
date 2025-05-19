@@ -6,6 +6,7 @@ public static class ApiEndpoints
     private const string PodcastsBase = $"{ApiBase}/podcasts";
     private const string EpisodesBase = $"{ApiBase}/episodes";
     private const string CreatorsBase = $"{ApiBase}/creators";
+    private const string ListenersBase = $"{ApiBase}/listeners";
     private const string PlaylistsBase = $"{ApiBase}/playlists";
 
     public static class Podcasts
@@ -43,5 +44,11 @@ public static class ApiEndpoints
     {
         public const string GetById = $"{CreatorsBase}/{{creatorId:guid}}";
         public const string ListCreatorPodcasts = $"{GetById}/podcasts";
+    }
+    
+    public static class Listeners
+    {
+        public const string GetById = $"{ListenersBase}/{{listenerId:guid}}";
+        public const string ListFollowedPodcasts = $"{GetById}/followed-podcasts";
     }
 }

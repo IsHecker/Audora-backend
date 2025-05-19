@@ -36,10 +36,7 @@ public static class EpisodeMapping
         };
     }
 
-    public static EpisodeResponse ToResponse(this Episode episode,
-        EpisodeStat? episodeStat = null,
-        EngagementStat? engagementStat = null,
-        Reaction? listenerReaction = null)
+    public static EpisodeResponse ToResponse(this Episode episode)
     {
         return new EpisodeResponse
         {
@@ -51,28 +48,15 @@ public static class EpisodeMapping
             Duration = episode.Duration,
             AudioFileId = episode.AudioFileId,
             EpisodeNumber = episode.EpisodeNumber,
-            ReleaseDate = episode.ReleaseDate,
-            ListenerReaction = listenerReaction?.ToResponse(),
-            EpisodeStat = episodeStat?.ToResponse(engagementStat!),
+            ReleaseDate = episode.ReleaseDate
         };
     }
 
-    public static IEnumerable<EpisodeResponse> ToResponse(this IEnumerable<Episode> episodes,
-        Dictionary<Guid, EpisodeStat>? episodeStats = null,
-        Dictionary<Guid, EngagementStat>? engagementStats = null,
-        Dictionary<Guid, Reaction>? listenerReactions = null)
+    public static IEnumerable<EpisodeResponse> ToResponse(this IEnumerable<Episode> episodes)
     {
         return episodes.Select(ep =>
         {
-            EpisodeStat? stat = null;
-            EngagementStat? engagement = null;
-            Reaction? reaction = null;
-
-            episodeStats?.TryGetValue(ep.Id, out stat);
-            engagementStats?.TryGetValue(ep.Id, out engagement);
-            listenerReactions?.TryGetValue(ep.Id, out reaction);
-
-            return ep.ToResponse(stat, engagement, reaction);
+            return ep.ToResponse();
         });
     }
 

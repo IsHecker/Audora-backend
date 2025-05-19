@@ -1,6 +1,7 @@
 using Audora.Application.Common.Models;
 using Audora.Application.Podcasts.Queries.GetPodcastById;
 using Audora.Application.Podcasts.Queries.ListCreatorPodcasts;
+using Audora.Application.Podcasts.Queries.ListFollowedPodcasts;
 using Audora.Application.Podcasts.Queries.ListPodcasts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,15 @@ public class PodcastController : ApiController
     [HttpGet(ApiEndpoints.Creators.ListCreatorPodcasts)]
     public async Task<IActionResult> ListCreatorPodcasts(Guid creatorId, [FromQuery] Pagination pagination)
     {
-        var query = new ListCreatorPodcastsQuery(creatorId, false, pagination);
+        var query = new ListCreatorPodcastsQuery(creatorId, pagination);
+        var listResult = await _sender.Send(query);
+        return listResult.Match(Ok, Problem);
+    }
+    
+    [HttpGet(ApiEndpoints.Listeners.ListFollowedPodcasts)]
+    public async Task<IActionResult> ListListenerFollowedPodcasts(Guid listenerId, [FromQuery] Pagination pagination)
+    {
+        var query = new ListFollowedPodcastsQuery(listenerId, pagination);
         var listResult = await _sender.Send(query);
         return listResult.Match(Ok, Problem);
     }

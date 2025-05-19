@@ -9,9 +9,9 @@ using Audora.Contracts.Common;
 using Audora.Contracts.Episodes.Responses;
 using Audora.Domain.Entities;
 
-namespace Audora.Application.Episodes.Queries.ListEpisodes;
+namespace Audora.Application.Episodes.Queries.ListEpisodesByParentId;
 
-public record ListEpisodesQuery(
+public record ListEpisodesByParentIdQuery(
     Guid ParentId,
     string ParentType,
     Guid ListenerId,
@@ -19,39 +19,43 @@ public record ListEpisodesQuery(
     bool Details = false)
     : IQuery<PagedResponse<EpisodeResponse>>;
 
-public class ListEpisodesQueryHandler : IQueryHandler<ListEpisodesQuery, PagedResponse<EpisodeResponse>>
+public class ListEpisodesByParentIdQueryHandler : IQueryHandler<ListEpisodesByParentIdQuery, PagedResponse<EpisodeResponse>>
 {
     private readonly IEpisodeRepository _episodeRepository;
     private readonly EpisodeResponseAttacher _episodeResponseAttacher;
 
-    public ListEpisodesQueryHandler(IEpisodeRepository episodeRepository,
+    public ListEpisodesByParentIdQueryHandler(IEpisodeRepository episodeRepository,
         EpisodeResponseAttacher episodeResponseAttacher)
     {
         _episodeRepository = episodeRepository;
         _episodeResponseAttacher = episodeResponseAttacher;
     }
 
-    public async Task<Result<PagedResponse<EpisodeResponse>>> Handle(ListEpisodesQuery request,
+    public async Task<Result<PagedResponse<EpisodeResponse>>> Handle(ListEpisodesByParentIdQuery request,
         CancellationToken cancellationToken)
     {
         var pagination = request.Pagination;
 
-        var episodes = (await GetEpisodes(request.ParentId, request.ParentType)).Paginate(pagination).ToList();
+        var episodes = await GetParentEpisodes(request.ParentId, request.ParentType);
 
-        // var response = request.Details
-        //     ? await _episodeResponseAttacher.AttachListenerMetadataAsync(episodes, request.ListenerId)
-        //     : episodes.Select(e => e.ToResponse());
+        var response = episodes.Paginate(pagination).ToResponse().ToList();
 
-        return episodes.Select(e => e.ToResponse())
-            .ToPagedResponse(pagination.PageNumber, pagination.PageSize, episodes.Count);
+        if (request.Details)
+            response = _episodeResponseAttacher.AttachTo(response)
+                .AttachEpisodeStats()
+                .AttachListenerReactions(request.ListenerId)
+                .GetResponseCollection();
+
+        return response.ToPagedResponse(pagination, episodes.Count());
     }
 
-    private async Task<IQueryable<Episode>> GetEpisodes(Guid parentId, string parentType)
+    private async Task<IQueryable<Episode>> GetParentEpisodes(Guid parentId, string parentType)
     {
         return parentType.ToLower() switch
         {
             "playlists" => await _episodeRepository.GetAllByPlaylistIdAsync(parentId),
-            _ => await _episodeRepository.GetAllByPodcastIdAsync(parentId)
+            "podcasts" => await _episodeRepository.GetAllByPodcastIdAsync(parentId),
+            _ => throw new NotImplementedException()
         };
     }
 }

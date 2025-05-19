@@ -8,7 +8,6 @@ public static class PodcastMapping
 {
     private static HashSet<Guid>? _isFollowedSet;
     private static Dictionary<Guid, byte>? _userRatingDict;
-    
 
 
     public static Podcast ToDomain(this CreatePodcastRequest request)
@@ -51,29 +50,26 @@ public static class PodcastMapping
             TotalEpisodes = podcast.TotalEpisodes,
             AverageRating = podcast.AverageRating,
             TotalRatings = podcast.TotalRatings,
-            IsFollowed = isFollowed,
+            IsFollowing = isFollowed,
             UserRating = userRating,
         };
     }
 
-    public static PodcastsResponse ToResponse(this IEnumerable<Podcast> podcasts)
+    public static IEnumerable<PodcastResponse> ToResponse(this IEnumerable<Podcast> podcasts)
     {
-        var response = new PodcastsResponse
+        var response = podcasts.Select(p =>
         {
-            Podcasts = podcasts.Select(p =>
-            {
-                var isFollowed = _isFollowedSet?.Contains(p.Id);
+            var isFollowed = _isFollowedSet?.Contains(p.Id);
 
-                byte? userRating = null;
-                if (_userRatingDict != null && _userRatingDict.TryGetValue(p.Id, out var rating))
-                    userRating = rating;
+            byte? userRating = null;
+            if (_userRatingDict != null && _userRatingDict.TryGetValue(p.Id, out var rating))
+                userRating = rating;
 
-                return p.ToResponse(isFollowed, userRating);
-            })
-        };
+            return p.ToResponse(isFollowed, userRating);
+        });
 
         Reset();
-        
+
         return response;
     }
 

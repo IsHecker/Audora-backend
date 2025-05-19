@@ -5,31 +5,39 @@ using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
 using Audora.Application.Common.Results;
 using Audora.Application.Common.Services;
+using Audora.Contracts.Common;
 using Audora.Contracts.Podcasts.Responses;
 
 namespace Audora.Application.Podcasts.Queries.ListPodcasts;
 
-public record ListPodcastsQuery(Guid ListenerId, Pagination Pagination) : IQuery<PodcastsResponse>;
+public record ListPodcastsQuery(Guid ListenerId, Pagination Pagination) : IQuery<PagedResponse<PodcastResponse>>;
 
-public class ListPodcastsQueryHandler : IQueryHandler<ListPodcastsQuery, PodcastsResponse>
+public class ListPodcastsQueryHandler : IQueryHandler<ListPodcastsQuery, PagedResponse<PodcastResponse>>
 {
     private readonly IPodcastRepository _podcastRepository;
-    private readonly PodcastService _podcastService;
+    private readonly PodcastResponseAttacher _podcastResponseAttacher;
 
-    public ListPodcastsQueryHandler(IPodcastRepository podcastRepository, PodcastService podcastService)
+    public ListPodcastsQueryHandler(IPodcastRepository podcastRepository,
+        PodcastResponseAttacher podcastResponseAttacher)
     {
         _podcastRepository = podcastRepository;
-        _podcastService = podcastService;
+        _podcastResponseAttacher = podcastResponseAttacher;
     }
 
-    public async Task<Result<PodcastsResponse>> Handle(ListPodcastsQuery request,
+    public async Task<Result<PagedResponse<PodcastResponse>>> Handle(ListPodcastsQuery request,
         CancellationToken cancellationToken)
     {
         // TODO Get trending/featured/new podcasts
         // filter parameter (e.g., type = "trending" | "new" | "featured").
 
-        var podcasts = (await _podcastRepository.GetAllAsync()).Paginate(request.Pagination);
+        var podcasts = await _podcastRepository.GetAllAsync();
 
-        return await _podcastService.AttachListenerMetadataAsync(podcasts, request.ListenerId);
+        var response = podcasts.Paginate(request.Pagination).ToResponse().ToList();
+
+        return _podcastResponseAttacher.AttachTo(response)
+            .AttachFollowStatus(request.ListenerId)
+            .AttachRatings(request.ListenerId)
+            .GetResponseCollection()
+            .ToPagedResponse(request.Pagination, podcasts.Count());
     }
 }

@@ -37,11 +37,9 @@ public class
         var episodesStats = (await _episodeStatRepository.GetAllByPodcastStateId(request.PodcastStatId))
             .Paginate(pagination);
 
-        var totalCount = episodesStats.Count();
-
         return episodesStats.AsEnumerable()
             .Select(es => es.ToResponse(GetEngagements(es.EpisodeId)))
-            .ToPagedResponse(pagination.PageNumber, pagination.PageSize, totalCount);
+            .ToPagedResponse(pagination, episodesStats.Count());
     }
 
     private EngagementStat GetEngagements(Guid episodeId)

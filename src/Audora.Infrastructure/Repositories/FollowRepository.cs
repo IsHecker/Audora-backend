@@ -20,12 +20,12 @@ public class FollowRepository : Repository<Follow>, IFollowRepository
         return Task.FromResult(Query.Where(x => x.FollowerId == followerId));
     }
 
-    public async Task<IQueryable<Follow>> GetListenerFollowsByEntityIds(Guid followerId, IQueryable<Guid> entityIds)
+    public async Task<IQueryable<Follow>> GetListenerFollowsByEntityIds(Guid followerId, IEnumerable<Guid> entityIds)
     {
         return (await GetListenerFollows(followerId)).Where(f => entityIds.Contains(f.EntityId));
     }
 
-    public async Task<bool> IsListenerFollowing(Guid followerId, Guid entityId)
+    public async Task<bool> IsListenerFollowingAsync(Guid followerId, Guid entityId)
     {
         return await Query.FirstOrDefaultAsync(f => f.FollowerId == followerId && f.EntityId == entityId) is not null;
     }
