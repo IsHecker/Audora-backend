@@ -19,4 +19,10 @@ public class PodcastRepository : Repository<Podcast>, IPodcastRepository
 
         return this;
     }
+
+    public IPodcastRepository WithPublishedPodcasts()
+    {
+        Query = Query.Where(podcast => podcast.IsPublished);
+        return this;
+    }
 }

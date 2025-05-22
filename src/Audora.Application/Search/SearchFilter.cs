@@ -12,5 +12,5 @@ public class SearchFilter
     public string? Language { get; init; }
     public string? SortField { get; init; }
     public SortOrder? SortOrder { get; init; }
-    public Pagination Pagination { get; init; } = null!;
+    public Pagination Pagination { get; set; } = null!;
 }

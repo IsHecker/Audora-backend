@@ -10,7 +10,7 @@ using Audora.Domain.Entities;
 
 namespace Audora.Application.Analytics.Queries.ListEpisodesAnalytics;
 
-public record ListEpisodesAnalyticsQuery(Guid PodcastStatId, Pagination Pagination)
+public record ListEpisodesAnalyticsQuery(Guid PodcastId, Pagination Pagination)
     : IQuery<PagedResponse<EpisodeAnalyticsResponse>>;
 
 public class
@@ -34,11 +34,10 @@ public class
 
         var pagination = request.Pagination;
 
-        var episodesStats = (await _episodeStatRepository.GetAllByPodcastStateId(request.PodcastStatId))
+        var episodesStats = (await _episodeStatRepository.GetAllByPodcastId(request.PodcastId))
             .Paginate(pagination);
 
-        return episodesStats.AsEnumerable()
-            .Select(es => es.ToResponse(GetEngagements(es.EpisodeId)))
+        return episodesStats.Select(es => es.ToResponse(GetEngagements(es.EpisodeId)))
             .ToPagedResponse(pagination, episodesStats.Count());
     }
 

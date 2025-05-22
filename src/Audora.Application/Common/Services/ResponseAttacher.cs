@@ -17,14 +17,14 @@ namespace Audora.Application.Common.Services
             Attachments.Add(attachment);
         }
 
-        protected async Task<TSelf> AttachAsync(
+        protected TSelf Attach(
             Func<Task> singleLogic,
             Func<Task> collectionLogic)
         {
             if (SingleResponse is not null)
-                await singleLogic();
+                singleLogic().GetAwaiter().GetResult();
             else if (ResponseCollection is not null)
-                await collectionLogic();
+                collectionLogic().GetAwaiter().GetResult();
             else
                 throw new InvalidOperationException("No response is set.");
 

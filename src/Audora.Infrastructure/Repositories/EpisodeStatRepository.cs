@@ -15,9 +15,9 @@ public class EpisodeStatRepository : Repository<EpisodeStat>, IEpisodeStatReposi
         return await Query.FirstAsync(es => es.EpisodeId == episodeId);
     }
 
-    public Task<IQueryable<EpisodeStat>> GetAllByPodcastStateId(Guid podcastStatId)
+    public Task<IQueryable<EpisodeStat>> GetAllByPodcastId(Guid podcastId)
     {
-        return Task.FromResult(Query.Where(es => es.PodcastStatId == podcastStatId));
+        return Task.FromResult(Query.Where(es => es.PodcastId == podcastId));
     }
 
     public Task<IQueryable<EpisodeStat>> GetAllByEpisodeIdsAsync(IEnumerable<Guid> episodeIds)

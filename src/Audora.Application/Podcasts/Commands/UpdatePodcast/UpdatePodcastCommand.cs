@@ -18,7 +18,7 @@ public class UpdatePodcastCommandHandler : ICommandHandler<UpdatePodcastCommand>
 
     public async Task<Result> Handle(UpdatePodcastCommand request, CancellationToken cancellationToken)
     {
-        var podcast = await _podcastRepository.GetByIdAsync(request.PodcastId);
+        var podcast = await _podcastRepository.AsTracking().GetByIdAsync(request.PodcastId);
 
         if (podcast is null)
         {

@@ -3,17 +3,18 @@ using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Results;
 using Audora.Contracts.Reactions.Responses;
+using Audora.Domain.Common.Enums;
 
-namespace Audora.Application.Reactions.Queries.GetListenerEntityReaction;
+namespace Audora.Application.Reactions.Queries.GetListenerReaction;
 
-public record GetListenerReactionQuery(Guid ListenerId, Guid EntityId) : IQuery<ListenerReactionResponse>;
+public record GetListenerReactionQuery(Guid ListenerId, Guid EntityId, EntityType EntityType) : IQuery<ListenerReactionResponse>;
 
-public class GetListenerReactionForQueryHandler
+public class GetListenerReactionQueryHandler
     : IQueryHandler<GetListenerReactionQuery, ListenerReactionResponse>
 {
     private readonly IReactionRepository _reactionRepository;
 
-    public GetListenerReactionForQueryHandler(IReactionRepository reactionRepository)
+    public GetListenerReactionQueryHandler(IReactionRepository reactionRepository)
     {
         _reactionRepository = reactionRepository;
     }

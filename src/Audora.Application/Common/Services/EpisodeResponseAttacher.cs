@@ -25,19 +25,11 @@ public class EpisodeResponseAttacher : ResponseAttacher<EpisodeResponseAttacher,
     }
 
 
-    // public async Task<IEnumerable<EpisodeResponse>> AttachListenerMetadataAsync(List<Episode> episodes,
-    //     Guid listenerId)
-    // {
-    //     return episodes.AsEnumerable().ToResponse(episodeStatsDict, engagementStatsDict, listenerReactionsDict);
-    // }
-
-
-
     public EpisodeResponseAttacher AttachEpisodeStats() =>
-        AttachAsync(
+        Attach(
             AttachEpisodeStatsForOneAsync,
             AttachEpisodeStatsForAllAsync
-        ).GetAwaiter().GetResult();
+        );
 
     private async Task AttachEpisodeStatsForAllAsync()
     {
@@ -66,10 +58,10 @@ public class EpisodeResponseAttacher : ResponseAttacher<EpisodeResponseAttacher,
 
 
     public EpisodeResponseAttacher AttachListenerReactions(Guid listenerId) =>
-        AttachAsync(
+        Attach(
             () => AttachReactionForOneAsync(listenerId),
             () => AttachReactionsForAllAsync(listenerId)
-        ).GetAwaiter().GetResult();
+        );
 
     private async Task AttachReactionsForAllAsync(Guid listenerId)
     {

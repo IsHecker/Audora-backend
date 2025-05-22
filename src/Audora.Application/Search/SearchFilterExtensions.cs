@@ -38,10 +38,28 @@ public static class SearchFilterExtensions
         if (value is null || (value is string str && string.IsNullOrWhiteSpace(str)))
             return source;
 
-        return source.Where(Expression.Lambda<Func<TSource, bool>>(
-            Expression.Equal(propertySelector.Body, Expression.Constant(value, typeof(TValue))),
-            propertySelector.Parameters));
+        var parameter = propertySelector.Parameters[0];
+        var member = propertySelector.Body;
+
+        Expression predicate;
+
+        if (typeof(TValue) == typeof(string))
+        {
+            var toLowerMethod = typeof(string).GetMethod(nameof(string.ToLower), Type.EmptyTypes);
+            var containsMethod = typeof(string).GetMethod(nameof(string.Contains), [typeof(string)]);
+
+            var propertyToLower = Expression.Call(member, toLowerMethod!);
+            var valueToLower = Expression.Constant(((string)(object)value!).ToLower());
+
+            predicate = Expression.Call(propertyToLower, containsMethod!, valueToLower);
+        }
+        else
+            predicate = Expression.Equal(member, Expression.Constant(value, typeof(TValue)));
+
+        var lambda = Expression.Lambda<Func<TSource, bool>>(predicate, parameter);
+        return source.Where(lambda);
     }
+
 
     public static IQueryable<Podcast> FilterByTags(this IQueryable<Podcast> podcasts, string[]? tags)
     {
@@ -56,14 +74,15 @@ public static class SearchFilterExtensions
         return rating is null ? podcasts : podcasts.Where(podcast => podcast.AverageRating >= rating);
     }
 
-    public static IQueryable<Podcast> FilterByCreator(this IQueryable<Podcast> podcasts, IUserService userService,
+    public static IQueryable<Podcast> FilterByCreator(this IQueryable<Podcast> podcasts, IQueryable<User> users,
         string? creator)
     {
         if (string.IsNullOrWhiteSpace(creator))
             return podcasts;
 
         // TODO improve and optimize search mechanism.
-        var creatorsIds = userService.GetUsersAsync().Result.Where(c => c.Name.Contains(creator)).Select(c => c.Id);
+        var creatorsIds = users.Where(c => c.Name.Contains(creator)).Select(c => c.Id);
+
         return podcasts.Where(podcast => creatorsIds.Contains(podcast.CreatorId));
     }
 }

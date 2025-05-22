@@ -1,8 +1,13 @@
 using Audora.Application.Analytics.Queries.GetEpisodeAnalytics;
 using Audora.Application.Analytics.Queries.ListEpisodesAnalytics;
+using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
+using Audora.Application.Episodes.Commands.CreateEpisode;
+using Audora.Application.Episodes.Commands.DeleteEpisode;
+using Audora.Application.Episodes.Commands.UpdateEpisode;
 using Audora.Application.Episodes.Queries.GetEpisodeById;
 using Audora.Application.Episodes.Queries.ListEpisodesByParentId;
+using Audora.Contracts.Episodes.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,5 +53,37 @@ public class EpisodeController : ApiController
         var query = new GetEpisodeAnalyticsQuery(episodeId);
         var getEpisodeAnalyticsResult = await _sender.Send(query);
         return getEpisodeAnalyticsResult.Match(Ok, Problem);
+    }
+
+
+    [HttpPost(ApiEndpoints.Podcasts.CreateEpisode)]
+    public async Task<IActionResult> CreateEpisodeForPodcast(Guid podcastId, CreateEpisodeRequest request)
+    {
+        var command = new CreateEpisodeCommand(podcastId, request.ToDomain());
+        var createEpisodeResult = await _sender.Send(command);
+        return createEpisodeResult.Match(
+            episode => CreatedAtAction(
+                nameof(GetEpisodeById),
+                new { episodeId = episode.Id },
+                episode.ToResponse()
+            ),
+            Problem
+        );
+    }
+
+    [HttpPut(ApiEndpoints.Episodes.Update)]
+    public async Task<IActionResult> UpdateEpisode(Guid episodeId, UpdateEpisodeRequest request)
+    {
+        var command = new UpdateEpisodeCommand(episodeId, request.ToDomain());
+        var updateEpisodeResult = await _sender.Send(command);
+        return updateEpisodeResult.Match(NoContent, Problem);
+    }
+
+    [HttpDelete(ApiEndpoints.Episodes.Delete)]
+    public async Task<IActionResult> DeleteEpisode(Guid episodeId)
+    {
+        var command = new DeleteEpisodeCommand(episodeId);
+        var deleteEpisodeResult = await _sender.Send(command);
+        return deleteEpisodeResult.Match(NoContent, Problem);
     }
 }

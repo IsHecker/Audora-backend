@@ -17,17 +17,26 @@ public class UnitOfWorkBehaviour<TRequest, TResponse> :
     }
 
     public async Task<TResponse> Handle(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
+    TRequest request,
+    RequestHandlerDelegate<TResponse> next,
+    CancellationToken cancellationToken)
     {
-        using (var transactionScope = new TransactionScope())
+        // enable async-flow so the scope can cross awaits
+        var scopeOptions = new TransactionOptions
+        {
+            IsolationLevel = IsolationLevel.ReadCommitted
+        };
+
+        using (var scope = new TransactionScope(
+            TransactionScopeOption.Required,
+            scopeOptions,
+            TransactionScopeAsyncFlowOption.Enabled))
         {
             var response = await next(cancellationToken);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            transactionScope.Complete();
-
+            scope.Complete();
             return response;
         }
     }

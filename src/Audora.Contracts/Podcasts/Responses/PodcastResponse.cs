@@ -1,6 +1,3 @@
-using Audora.Contracts.Common;
-using Audora.Contracts.Episodes.Responses;
-
 namespace Audora.Contracts.Podcasts.Responses;
 
 public class PodcastResponse
@@ -17,4 +14,5 @@ public class PodcastResponse
     public byte? UserRating { get; set; }
     public float? AverageRating { get; init; }
     public int? TotalRatings { get; init; }
+    public IEnumerable<string>? Tags { get; init; }
 }

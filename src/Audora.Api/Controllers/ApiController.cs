@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Audora.Api.Controllers;
 
+[ApiController]
 public class ApiController : ControllerBase
 {
     protected readonly Guid ListenerId = Guid.Parse("735331aa-72c7-4d48-a092-a0ce72a6c49e");
-    
+
     protected IActionResult Problem(List<Error> errors)
     {
         if (errors.Count is 0)
@@ -15,8 +16,8 @@ public class ApiController : ControllerBase
             return Problem();
         }
 
-        return errors.All(error => error.Type == ErrorType.Validation) ? 
-            ValidationProblem(errors) 
+        return errors.All(error => error.Type == ErrorType.Validation) ?
+            ValidationProblem(errors)
             : Problem(errors[0]);
     }
 
@@ -27,7 +28,8 @@ public class ApiController : ControllerBase
             ErrorType.Conflict => StatusCodes.Status409Conflict,
             ErrorType.Validation => StatusCodes.Status400BadRequest,
             ErrorType.NotFound => StatusCodes.Status404NotFound,
-            ErrorType.Unauthorized => StatusCodes.Status403Forbidden,
+            ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
+            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
             _ => StatusCodes.Status500InternalServerError,
         };
 

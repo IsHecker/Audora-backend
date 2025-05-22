@@ -21,7 +21,7 @@ public class Podcast : Entity
     public string Slug => Name.ToLower().Replace(' ', '-');
 
     public ICollection<Episode>? Episodes { get; } = [];
-    
+
     [NotMapped]
     public ICollection<Tag> Tags { get; private set; } = [];
 
@@ -86,7 +86,7 @@ public class Podcast : Entity
 
     public void AddEpisode(Episode episode)
     {
-        Episodes.Add(episode);
+        Episodes?.Add(episode);
         TotalEpisodes++;
     }
 

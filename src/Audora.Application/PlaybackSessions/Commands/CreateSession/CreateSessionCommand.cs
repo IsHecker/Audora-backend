@@ -4,7 +4,6 @@ using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Results;
 using Audora.Contracts.PlaybackSessions.Responses;
 using Audora.Domain.Entities;
-using MediatR;
 
 namespace Audora.Application.PlaybackSessions.Commands.CreateSession;
 
@@ -52,7 +51,7 @@ public class CreateSessionCommandHandler : ICommandHandler<CreateSessionCommand,
         }
 
         await IncreasePlayCount(request.EpisodeId, podcastStat);
-        
+
         await _playbackSessionRepository.AddAsync(newSession);
         return newSession.ToResponse();
     }

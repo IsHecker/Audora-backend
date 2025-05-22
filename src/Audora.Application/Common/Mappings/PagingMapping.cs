@@ -3,7 +3,7 @@ using Audora.Contracts.Common;
 
 namespace Audora.Application.Common.Mappings;
 
-public static class PagingMappings
+public static class PagingMapping
 {
     public static PagedResponse<T> ToPagedResponse<T>(this IEnumerable<T> source,
         Pagination pagination,

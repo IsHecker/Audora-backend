@@ -40,7 +40,7 @@ public class Result
         return IsSuccess ? onSuccess() : onFailure(Errors[0]);
     }
 
-    public TResult Match<TResult>(Func<TResult> onSuccess, Func<IReadOnlyList<Error>, TResult> onFailure)
+    public TResult Match<TResult>(Func<TResult> onSuccess, Func<List<Error>, TResult> onFailure)
     {
         return IsSuccess ? onSuccess() : onFailure(_errors!);
     }

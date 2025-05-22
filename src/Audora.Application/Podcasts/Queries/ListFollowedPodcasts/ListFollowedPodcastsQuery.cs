@@ -34,7 +34,7 @@ public class ListFollowedPodcastsQueryHandler : IQueryHandler<ListFollowedPodcas
         .Select(f => f.EntityId)
         .Paginate(request.Pagination);
 
-    var podcasts = await _podcastRepository.GetAllAsync();
+    var podcasts = await _podcastRepository.WithPublishedPodcasts().GetAllAsync();
 
     // TODO check for errors.
 

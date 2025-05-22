@@ -6,10 +6,6 @@ namespace Audora.Application.Common.Mappings;
 
 public static class PodcastMapping
 {
-    private static HashSet<Guid>? _isFollowedSet;
-    private static Dictionary<Guid, byte>? _userRatingDict;
-
-
     public static Podcast ToDomain(this CreatePodcastRequest request)
     {
         return Podcast.Create(
@@ -36,7 +32,7 @@ public static class PodcastMapping
             coverImageUrl: request.CoverImageUrl);
     }
 
-    public static PodcastResponse ToResponse(this Podcast podcast, bool? isFollowed = null, byte? userRating = null)
+    public static PodcastResponse ToResponse(this Podcast podcast)
     {
         return new PodcastResponse
         {
@@ -50,41 +46,12 @@ public static class PodcastMapping
             TotalEpisodes = podcast.TotalEpisodes,
             AverageRating = podcast.AverageRating,
             TotalRatings = podcast.TotalRatings,
-            IsFollowing = isFollowed,
-            UserRating = userRating,
+            Tags = podcast.Tags.Select(tag => tag.Name)
         };
     }
 
     public static IEnumerable<PodcastResponse> ToResponse(this IEnumerable<Podcast> podcasts)
     {
-        var response = podcasts.Select(p =>
-        {
-            var isFollowed = _isFollowedSet?.Contains(p.Id);
-
-            byte? userRating = null;
-            if (_userRatingDict != null && _userRatingDict.TryGetValue(p.Id, out var rating))
-                userRating = rating;
-
-            return p.ToResponse(isFollowed, userRating);
-        });
-
-        Reset();
-
-        return response;
-    }
-
-    public static IQueryable<Podcast> WithListenerMetaData(this IQueryable<Podcast> podcasts,
-        HashSet<Guid> isFollowedSet,
-        Dictionary<Guid, byte> userRatingDict)
-    {
-        _isFollowedSet = isFollowedSet;
-        _userRatingDict = userRatingDict;
-        return podcasts;
-    }
-
-    private static void Reset()
-    {
-        _isFollowedSet = null;
-        _userRatingDict = null;
+        return podcasts.Select(ToResponse);
     }
 }

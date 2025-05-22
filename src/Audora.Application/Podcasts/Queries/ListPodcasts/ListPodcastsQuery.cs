@@ -30,7 +30,7 @@ public class ListPodcastsQueryHandler : IQueryHandler<ListPodcastsQuery, PagedRe
         // TODO Get trending/featured/new podcasts
         // filter parameter (e.g., type = "trending" | "new" | "featured").
 
-        var podcasts = await _podcastRepository.GetAllAsync();
+        var podcasts = await _podcastRepository.WithPublishedPodcasts().GetAllAsync();
 
         var response = podcasts.Paginate(request.Pagination).ToResponse().ToList();
 

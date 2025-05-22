@@ -1,8 +1,14 @@
+using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
+using Audora.Application.Follows.Queries.ListPodcastFollowers;
+using Audora.Application.Podcasts.Commands.CreatePodcast;
+using Audora.Application.Podcasts.Commands.DeletePodcast;
+using Audora.Application.Podcasts.Commands.UpdatePodcast;
 using Audora.Application.Podcasts.Queries.GetPodcastById;
 using Audora.Application.Podcasts.Queries.ListCreatorPodcasts;
 using Audora.Application.Podcasts.Queries.ListFollowedPodcasts;
 using Audora.Application.Podcasts.Queries.ListPodcasts;
+using Audora.Contracts.Podcasts.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,12 +47,44 @@ public class PodcastController : ApiController
         var listResult = await _sender.Send(query);
         return listResult.Match(Ok, Problem);
     }
-    
+
     [HttpGet(ApiEndpoints.Listeners.ListFollowedPodcasts)]
     public async Task<IActionResult> ListListenerFollowedPodcasts(Guid listenerId, [FromQuery] Pagination pagination)
     {
         var query = new ListFollowedPodcastsQuery(listenerId, pagination);
         var listResult = await _sender.Send(query);
         return listResult.Match(Ok, Problem);
+    }
+
+
+    [HttpPost(ApiEndpoints.Podcasts.Create)]
+    public async Task<IActionResult> CreatePodcast(CreatePodcastRequest request)
+    {
+        var command = new CreatePodcastCommand(request.ToDomain(), request.Episodes?.ToDomain());
+        var createResult = await _sender.Send(command);
+        return createResult.Match(
+            response => CreatedAtAction(
+                nameof(GetPodcastById),
+                new { podcastId = response.Id },
+                response
+            ),
+            Problem
+        );
+    }
+
+    [HttpPut(ApiEndpoints.Podcasts.Update)]
+    public async Task<IActionResult> UpdatePodcast(Guid podcastId, UpdatePodcastRequest request)
+    {
+        var command = new UpdatePodcastCommand(podcastId, request.ToDomain());
+        var updateResult = await _sender.Send(command);
+        return updateResult.Match(NoContent, Problem);
+    }
+
+    [HttpDelete(ApiEndpoints.Podcasts.Delete)]
+    public async Task<IActionResult> DeletePodcast(Guid podcastId)
+    {
+        var command = new DeletePodcastCommand(podcastId);
+        var deleteResult = await _sender.Send(command);
+        return deleteResult.Match(NoContent, Problem);
     }
 }

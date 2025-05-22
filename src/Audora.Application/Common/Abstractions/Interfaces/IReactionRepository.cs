@@ -2,11 +2,8 @@ using Audora.Domain.Entities;
 
 namespace Audora.Application.Common.Abstractions.Interfaces;
 
-public interface IReactionRepository
+public interface IReactionRepository : IRepository<Reaction>
 {
-    Task<IQueryable<Reaction>> GetAllAsync();
     Task<IQueryable<Reaction>> GetAllByEntityIdsAsync(IEnumerable<Guid> entityIds);
     Task<Reaction?> GetAsync(Guid listenerId, Guid entityId);
-    Task AddAsync(Reaction reaction);
-    Task<bool> DeleteAsync(Reaction reaction);
 }

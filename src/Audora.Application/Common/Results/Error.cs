@@ -4,8 +4,8 @@ public readonly record struct Error(string Code, string Description, ErrorType T
 {
     public static Error NoErrors =>
         Unexpected("Result.NoErrors", "Error list cannot be retrieved from a successful Result.");
-    
-    
+
+
     public static Error Failure(string code = "General.Failure", string description = "A 'failure' error has occurred.")
     {
         return new Error(code, description, ErrorType.Failure);
@@ -34,7 +34,13 @@ public readonly record struct Error(string Code, string Description, ErrorType T
     {
         return new Error(code, description, ErrorType.Unauthorized);
     }
-    
+
+    public static Error Forbidden(string code = "General.Forbidden",
+        string description = "A 'Forbidden' error has occurred.")
+    {
+        return new Error(code, description, ErrorType.Forbidden);
+    }
+
     public static Error Unexpected(string code = "General.Unexpected",
         string description = "An 'unexpected' error has occurred.")
     {

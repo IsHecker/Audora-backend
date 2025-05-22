@@ -1,14 +1,15 @@
 using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Application.Common.Abstractions.Messaging;
+using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Results;
+using Audora.Contracts.Podcasts.Responses;
 using Audora.Domain.Entities;
-using MediatR;
 
 namespace Audora.Application.Podcasts.Commands.CreatePodcast;
 
-public record CreatePodcastCommand(Podcast Podcast, ICollection<Episode>? Episodes) : ICommand<Podcast>;
+public record CreatePodcastCommand(Podcast Podcast, IEnumerable<Episode>? Episodes) : ICommand<PodcastResponse>;
 
-public class CreatePodcastCommandHandler : ICommandHandler<CreatePodcastCommand, Podcast>
+public class CreatePodcastCommandHandler : ICommandHandler<CreatePodcastCommand, PodcastResponse>
 {
     private readonly IPodcastRepository _podcastRepository;
 
@@ -17,7 +18,7 @@ public class CreatePodcastCommandHandler : ICommandHandler<CreatePodcastCommand,
         _podcastRepository = podcastRepository;
     }
 
-    public async Task<Result<Podcast>> Handle(CreatePodcastCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PodcastResponse>> Handle(CreatePodcastCommand request, CancellationToken cancellationToken)
     {
         var podcast = request.Podcast;
 
@@ -28,6 +29,6 @@ public class CreatePodcastCommandHandler : ICommandHandler<CreatePodcastCommand,
 
         await _podcastRepository.AddAsync(podcast);
 
-        return podcast;
+        return podcast.ToResponse();
     }
 }

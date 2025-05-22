@@ -1,9 +1,10 @@
+using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace Audora.Infrastructure.Repositories;
 
-public abstract class Repository<T> where T : Entity
+public abstract class Repository<T> : IRepository<T> where T : Entity
 {
     protected readonly ApplicationDbContext Context;
 
@@ -44,5 +45,11 @@ public abstract class Repository<T> where T : Entity
     public virtual async Task<bool> DeleteAsync(T entity)
     {
         return await Query.Where(e => e.Id == entity.Id).ExecuteDeleteAsync() > 0;
+    }
+
+    public IRepository<T> AsTracking()
+    {
+        Query = Query.AsTracking();
+        return this;
     }
 }

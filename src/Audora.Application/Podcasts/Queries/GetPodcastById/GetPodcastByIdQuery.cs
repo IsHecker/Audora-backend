@@ -13,12 +13,10 @@ public record GetPodcastByIdQuery(Guid PodcastId, Guid ListenerId) : IQuery<Podc
 public class GetPodcastByIdQueryHandler : IQueryHandler<GetPodcastByIdQuery, PodcastResponse>
 {
     private readonly IPodcastRepository _podcastRepository;
-    private readonly EpisodeResponseAttacher _episodeResponseAttacher;
 
-    public GetPodcastByIdQueryHandler(IPodcastRepository podcastRepository, EpisodeResponseAttacher episodeResponseAttacher)
+    public GetPodcastByIdQueryHandler(IPodcastRepository podcastRepository)
     {
         _podcastRepository = podcastRepository;
-        _episodeResponseAttacher = episodeResponseAttacher;
     }
 
     public async Task<Result<PodcastResponse>> Handle(GetPodcastByIdQuery request, CancellationToken cancellationToken)
@@ -29,6 +27,11 @@ public class GetPodcastByIdQueryHandler : IQueryHandler<GetPodcastByIdQuery, Pod
         if (podcast is null)
         {
             return Error.NotFound(description: $"Podcast with Id '{request.PodcastId}' is not found.");
+        }
+
+        if (!podcast.IsPublished)
+        {
+            return Error.Forbidden(description: $"This Podcast is Unpublished.");
         }
 
         return podcast.ToResponse();

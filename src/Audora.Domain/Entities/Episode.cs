@@ -4,19 +4,19 @@ namespace Audora.Domain.Entities;
 
 public class Episode : Entity
 {
-    public string Name { get; init; } = null!;
     public Guid PodcastId { get; init; }
-    public string Description { get; init; } = null!;
-    public string? CoverImageUrl { get; init; }
-    public long Duration { get; init; }
-    public Guid AudioFileId { get; init; }
     public string PodcastName { get; init; } = null!;
-    public bool IsPublished { get; init; }
+    public string Name { get; private set; } = null!;
+    public string Description { get; private set; } = null!;
+    public string? CoverImageUrl { get; private set; }
+    public long Duration { get; private set; }
+    public Guid AudioFileId { get; private set; }
+    public bool IsPublished { get; private set; }
     public int EpisodeNumber { get; init; }
     public DateTime ReleaseDate { get; init; } // The date when it's published
     public string Slug => Name.ToLower().Replace(' ', '-');
 
-    public ICollection<Playlist> Playlists { get; init; }
+    public ICollection<Playlist> Playlists { get; init; } = null!;
 
     public Episode(
         string name,
@@ -38,8 +38,17 @@ public class Episode : Entity
         CoverImageUrl = coverImageUrl;
     }
 
-    private Episode(string? coverImageUrl)
+    private Episode()
     {
-        CoverImageUrl = coverImageUrl;
+    }
+
+    public void Update(Episode updatedEpisode)
+    {
+        Name = updatedEpisode.Name;
+        Description = updatedEpisode.Description;
+        CoverImageUrl = updatedEpisode.CoverImageUrl;
+        AudioFileId = updatedEpisode.AudioFileId;
+        Duration = updatedEpisode.Duration;
+        IsPublished = updatedEpisode.IsPublished;
     }
 }

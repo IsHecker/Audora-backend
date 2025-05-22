@@ -7,16 +7,21 @@ public class EngagementStat : Entity
 {
     public Guid EntityId { get; init; }
     public EntityType EntityType { get; init; }
-    public int Likes{ get; private set; }
-    public int Dislikes{ get; private set; }
-    public int Comments{ get; private set; }
+    public int Likes { get; private set; }
+    public int Dislikes { get; private set; }
+    public int Comments { get; private set; }
 
-    
+
+    public EngagementStat(Guid entityId, EntityType entityType)
+    {
+        EntityId = entityId;
+        EntityType = entityType;
+    }
+
     private EngagementStat()
     {
-        
     }
-    
+
 
     public void AddLike() => Likes++;
 

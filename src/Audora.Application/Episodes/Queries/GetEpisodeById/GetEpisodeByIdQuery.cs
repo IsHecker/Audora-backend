@@ -29,10 +29,7 @@ public class GetEpisodeByIdQueryHandler : IQueryHandler<GetEpisodeByIdQuery, Epi
             return Error.NotFound(description: $"Episode with Id '{request.EpisodeId}' is not found.");
         }
 
-        var response = episode.ToResponse();
-
-
-        return _episodeResponseAttacher.AttachTo(response)
+        return _episodeResponseAttacher.AttachTo(episode.ToResponse())
             .AttachEpisodeStats()
             .AttachListenerReactions(request.ListenerId)
             .GetSingleResponse();

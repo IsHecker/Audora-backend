@@ -10,10 +10,13 @@ public record DeleteEpisodeCommand(Guid EpisodeId) : ICommand;
 public class DeleteEpisodeCommandHandler : ICommandHandler<DeleteEpisodeCommand>
 {
     private readonly IEpisodeRepository _episodeRepository;
+    private readonly IEngagementStatRepository _engagementStatRepository;
 
-    public DeleteEpisodeCommandHandler(IEpisodeRepository episodeRepository)
+    public DeleteEpisodeCommandHandler(IEpisodeRepository episodeRepository,
+        IEngagementStatRepository engagementStatRepository)
     {
         _episodeRepository = episodeRepository;
+        _engagementStatRepository = engagementStatRepository;
     }
 
     public async Task<Result> Handle(DeleteEpisodeCommand request, CancellationToken cancellationToken)
@@ -24,7 +27,9 @@ public class DeleteEpisodeCommandHandler : ICommandHandler<DeleteEpisodeCommand>
         {
             return Error.NotFound(description: $"Episode with Id '{request.EpisodeId}' is not found.");
         }
-        
+
+        await _engagementStatRepository.DeleteByEntityIdAsync(request.EpisodeId);
+
         return Result.Success;
     }
 }

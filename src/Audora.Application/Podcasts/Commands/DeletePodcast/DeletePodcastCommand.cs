@@ -1,7 +1,6 @@
 using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Results;
-using MediatR;
 
 namespace Audora.Application.Podcasts.Commands.DeletePodcast;
 
@@ -20,8 +19,8 @@ public class DeletePodcastCommandHandler : ICommandHandler<DeletePodcastCommand>
     {
         var isDeleted = await _podcastRepository.DeleteAsync(request.PodcastId);
 
-        return !isDeleted
-            ? Error.NotFound(description: $"Podcast with Id '{request.PodcastId}' is not found.")
-            : Result.Success;
+        return isDeleted
+            ? Result.Success
+            : Error.NotFound(description: $"Podcast with Id '{request.PodcastId}' is not found.");
     }
 }

@@ -23,16 +23,16 @@ public class PodcastResponseAttacher : ResponseAttacher<PodcastResponseAttacher,
     }
 
     public PodcastResponseAttacher AttachRatings(Guid listenerId) =>
-        AttachAsync(
+        Attach(
             () => AttachRatingForOneAsync(listenerId),
             () => AttachRatingsForAllAsync(listenerId)
-        ).GetAwaiter().GetResult();
+        );
 
     public PodcastResponseAttacher AttachFollowStatus(Guid listenerId) =>
-        AttachAsync(
+        Attach(
             () => AttachFollowStatusForOneAsync(listenerId),
             () => AttachFollowStatusForAllAsync(listenerId)
-        ).GetAwaiter().GetResult();
+        );
 
 
     private async Task AttachRatingsForAllAsync(Guid listenerId)

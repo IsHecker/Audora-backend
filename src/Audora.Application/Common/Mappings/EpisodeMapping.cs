@@ -20,6 +20,24 @@ public static class EpisodeMapping
         );
     }
 
+    public static Episode ToDomain(this UpdateEpisodeRequest request)
+    {
+        return new Episode(
+            podcastId: Guid.Empty,
+            audioFileId: request.AudioFileId,
+            name: request.Name,
+            description: request.Description,
+            coverImageUrl: request.CoverImageUrl,
+            isPublished: request.IsPublished,
+            podcastName: string.Empty,
+            episodeNumber: 0
+        );
+    }
+
+    public static IEnumerable<Episode> ToDomain(this IEnumerable<CreateEpisodeRequest> request)
+    {
+        return request.Select(ToDomain);
+    }
 
     public static EpisodeResponse ToSimpleResponse(this Episode episode)
     {
