@@ -4,20 +4,25 @@ using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Models;
 using Audora.Application.Common.Results;
 using Audora.Application.Common.Services;
+using Audora.Contracts.Common;
 using Audora.Contracts.Podcasts.Responses;
 using Audora.Domain.Common.Enums;
+using Audora.Application.Common.Mappings;
+using Audora.Domain.Entities;
 
 namespace Audora.Application.Podcasts.Queries.ListFollowedPodcasts;
 
-public record ListFollowedPodcastsQuery(Guid ListenerId, Pagination Pagination) : IQuery<PodcastsResponse>;
+public record ListFollowedPodcastsQuery(Guid ListenerId, Pagination Pagination) : IQuery<PagedResponse<PodcastResponse>>;
 
-public class ListFollowedPodcastsQueryHandler : IQueryHandler<ListFollowedPodcastsQuery, PodcastsResponse>
+public class ListFollowedPodcastsQueryHandler : IQueryHandler<ListFollowedPodcastsQuery, PagedResponse<PodcastResponse>>
 {
   private readonly IPodcastRepository _podcastRepository;
   private readonly IFollowRepository _followRepository;
   private readonly PodcastResponseAttacher _podcastResponseAttacher;
 
-  public ListFollowedPodcastsQueryHandler(IFollowRepository followRepository, IPodcastRepository podcastRepository,
+  public ListFollowedPodcastsQueryHandler(
+      IFollowRepository followRepository,
+      IPodcastRepository podcastRepository,
       PodcastResponseAttacher podcastResponseAttacher)
   {
     _followRepository = followRepository;
@@ -26,21 +31,42 @@ public class ListFollowedPodcastsQueryHandler : IQueryHandler<ListFollowedPodcas
   }
 
 
-  public async Task<Result<PodcastsResponse>> Handle(ListFollowedPodcastsQuery request,
+  public async Task<Result<PagedResponse<PodcastResponse>>> Handle(ListFollowedPodcastsQuery request,
       CancellationToken cancellationToken)
   {
-    var followedPodcastIds = (await _followRepository.GetListenerFollows(request.ListenerId))
-        .Where(f => f.EntityType == EntityType.Podcast)
-        .Select(f => f.EntityId)
-        .Paginate(request.Pagination);
+    var followedPodcastIds = (await _followRepository.GetListenerFollows(request.ListenerId, EntityType.Podcast))
+        .Select(f => f.EntityId);
+
+    var totalCount = followedPodcastIds.Count();
+
+    if (totalCount == 0)
+      return Array.Empty<PodcastResponse>().ToPagedResponse(request.Pagination, 0);
+
+
+    followedPodcastIds = followedPodcastIds.Paginate(request.Pagination);
+
 
     var podcasts = await _podcastRepository.WithPublishedPodcasts().GetAllAsync();
 
-    // TODO check for errors.
-
     var followedPodcasts = podcasts.Where(podcast => followedPodcastIds.Contains(podcast.Id));
 
-    // return await _podcastResponseAttacher.AttachListenerMetadataAsync(followedPodcasts, request.ListenerId);
-    return null;
+    return CreateResponse(request, followedPodcasts, totalCount);
+  }
+
+  private Result<PagedResponse<PodcastResponse>> CreateResponse(
+      ListFollowedPodcastsQuery request,
+      IQueryable<Podcast> followedPodcasts,
+      int totalCount)
+  {
+    var response = followedPodcasts.ToResponse().ToList();
+
+    _podcastResponseAttacher.AttachTo(response).AttachRatings(request.ListenerId);
+
+    foreach (var item in response)
+    {
+      item.IsFollowing = true;
+    }
+
+    return response.ToPagedResponse(request.Pagination, totalCount);
   }
 }

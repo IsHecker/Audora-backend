@@ -17,11 +17,9 @@ public static class Extensions
 
     public static EntityType ToEntityType(this string routeSegment)
     {
-        return routeSegment switch
-        {
-            "episodes" => EntityType.Episode,
-            "comments" => EntityType.Comment,
-            _ => throw new ArgumentOutOfRangeException(nameof(routeSegment), $"Invalid route segment: '{routeSegment}'")
-        };
+        if (!Enum.TryParse<EntityType>(routeSegment.AsSpan()[0..^1], true, out var entityType))
+            throw new ArgumentOutOfRangeException(nameof(routeSegment), $"Invalid route segment: '{routeSegment}'");
+
+        return entityType;
     }
 }

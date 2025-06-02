@@ -24,9 +24,7 @@ public class ListCreatorPodcastsQueryHandler : IQueryHandler<ListCreatorPodcasts
     public async Task<Result<PagedResponse<PodcastResponse>>> Handle(ListCreatorPodcastsQuery request,
         CancellationToken cancellationToken)
     {
-        var podcasts = await _podcastRepository.GetAllAsync();
-
-        var creatorPodcasts = podcasts.Where(podcast => podcast.CreatorId == request.CreatorId);
+        var creatorPodcasts = await _podcastRepository.GetCreatorPodcasts(request.CreatorId);
 
         return creatorPodcasts
             .Paginate(request.Pagination)

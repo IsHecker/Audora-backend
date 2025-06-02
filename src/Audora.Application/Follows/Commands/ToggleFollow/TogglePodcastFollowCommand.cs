@@ -6,7 +6,7 @@ using Audora.Domain.Entities;
 
 namespace Audora.Application.Follows.Commands.ToggleFollow;
 
-public record TogglePodcastFollowCommand(Guid ListenerId, Guid PodcastId) : ICommand;
+public record TogglePodcastFollowCommand(Guid ListenerId, Guid PodcastId, EntityType EntityType) : ICommand;
 
 public class TogglePodcastFollowCommandHandler : ICommandHandler<TogglePodcastFollowCommand>
 {
@@ -28,7 +28,7 @@ public class TogglePodcastFollowCommandHandler : ICommandHandler<TogglePodcastFo
         if (podcastStat is null)
             return Error.NotFound(description: $"PodcastStat with podcast Id '{request.PodcastId} is not found.'");
 
-        var listenerFollow = (await _followRepository.GetListenerFollows(request.ListenerId))
+        var listenerFollow = (await _followRepository.GetListenerFollows(request.ListenerId, request.EntityType))
             .FirstOrDefault(f => f.EntityId == request.PodcastId);
 
         if (listenerFollow is null)

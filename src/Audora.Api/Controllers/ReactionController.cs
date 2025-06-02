@@ -1,6 +1,8 @@
 using Audora.Application.Common;
+using Audora.Application.Common.Models;
 using Audora.Application.Reactions.Commands.ToggleReaction;
 using Audora.Application.Reactions.Queries.GetListenerReaction;
+using Audora.Application.Reactions.Queries.ListEntityReactions;
 using Audora.Contracts.Reactions.Requests;
 using Audora.Domain.Common.Enums;
 using Audora.Domain.Entities;
@@ -24,6 +26,14 @@ public class ReactionController : ApiController
         var query = new GetListenerReactionQuery(listenerId, entityId, entityType);
         var listenerReactionResult = await _sender.Send(query);
         return listenerReactionResult.Match(Ok, Problem);
+    }
+
+    [HttpGet(ApiEndpoints.Reactions.ListEntityReactions)]
+    public async Task<IActionResult> ListEntityReactions(Guid entityId, string resourceType, [FromQuery] Pagination pagination)
+    {
+        var query = new ListEntityReactionsQuery(entityId, resourceType.ToEntityType(), pagination);
+        var listResult = await _sender.Send(query);
+        return listResult.Match(Ok, Problem);
     }
 
     [HttpPost(ApiEndpoints.Reactions.ReactOnEntity)]

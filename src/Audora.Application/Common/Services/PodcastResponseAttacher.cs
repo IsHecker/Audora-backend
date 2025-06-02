@@ -1,5 +1,6 @@
 using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Contracts.Podcasts.Responses;
+using Audora.Domain.Common.Enums;
 
 namespace Audora.Application.Common.Services;
 
@@ -58,7 +59,7 @@ public class PodcastResponseAttacher : ResponseAttacher<PodcastResponseAttacher,
 
     private async Task AttachFollowStatusForAllAsync(Guid listenerId)
     {
-        var follows = await _followRepository.GetListenerFollowsByEntityIds(listenerId, PodcastIds);
+        var follows = await _followRepository.GetListenerFollowsByEntityIds(listenerId, EntityType.Podcast, PodcastIds);
         var followedIds = follows.Select(f => f.EntityId).ToHashSet();
 
         AddAttachment(response => response.IsFollowing = followedIds.Contains(response.Id));

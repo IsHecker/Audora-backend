@@ -1,3 +1,4 @@
+using Audora.Application.Common;
 using Audora.Application.Common.Models;
 using Audora.Application.Follows.Commands.ToggleFollow;
 using Audora.Application.Follows.Queries.ListPodcastFollowers;
@@ -27,7 +28,7 @@ public class FollowController : ApiController
     [HttpPost(ApiEndpoints.Follows.FollowEntity)]
     public async Task<IActionResult> FollowEntity(Guid entityId, string resourceType)
     {
-        var command = new TogglePodcastFollowCommand(ListenerId, entityId);
+        var command = new TogglePodcastFollowCommand(ListenerId, entityId, resourceType.ToEntityType());
         var followingResult = await _sender.Send(command);
         return followingResult.Match(NoContent, Problem);
     }

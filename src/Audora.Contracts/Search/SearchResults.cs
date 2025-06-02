@@ -1,16 +1,16 @@
 using System.Text.Json.Serialization;
 using Audora.Contracts.Common;
-using Audora.Domain.Entities;
+using Audora.Contracts.Episodes.Responses;
+using Audora.Contracts.Podcasts.Responses;
 
-namespace Audora.Application.Search;
+namespace Audora.Contracts.Search;
 
-public class SearchResults
+public class SearchResponse
 {
-    public IEnumerable<Podcast> Podcasts { get; init; } = null!;
-    public IEnumerable<Episode> Episodes { get; init; } = null!;
+    public IEnumerable<PodcastResponse>? Podcasts { get; init; } = null!;
+    public IEnumerable<EpisodeResponse>? Episodes { get; init; } = null!;
 
     [JsonPropertyName("results")]
-    // public PagedResponse<SearchResultItem>? MixedResults = null!;
     public PagedResponse<SearchResultItem>? MixedResults { get; init; } = null!;
 }
 

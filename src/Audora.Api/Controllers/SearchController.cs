@@ -19,7 +19,7 @@ public class SearchController : ApiController
     [HttpGet(ApiEndpoints.Search.GlobalSearch)]
     public async Task<IActionResult> GlobalSearch([FromQuery] SearchFilter searchFilter, [FromQuery] Pagination pagination)
     {
-        var query = new SearchQuery(searchFilter, pagination);
+        var query = new SearchQuery(searchFilter, pagination, IsMixed: false);
         var searchResult = await _sender.Send(query);
         return searchResult.Match(Ok, Problem);
     }

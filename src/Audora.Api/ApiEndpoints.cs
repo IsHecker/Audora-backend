@@ -95,6 +95,7 @@ public static class ApiEndpoints
     public static class Reactions
     {
         public const string ReactOnEntity = $"{ApiBase}/reactions/{{resourceType}}/{{entityId:guid}}";
+        public const string ListEntityReactions = $"{ApiBase}/{{resourceType}}/{{entityId:guid}}/reactions";
     }
 
     public static class Follows

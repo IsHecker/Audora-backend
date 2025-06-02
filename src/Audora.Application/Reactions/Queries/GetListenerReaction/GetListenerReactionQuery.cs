@@ -22,7 +22,7 @@ public class GetListenerReactionQueryHandler
     public async Task<Result<ReactionResponse>> Handle(GetListenerReactionQuery request,
         CancellationToken cancellationToken)
     {
-        var reaction = await _reactionRepository.GetAsync(request.ListenerId, request.EntityId);
+        var reaction = await _reactionRepository.GetAsync(request.ListenerId, request.EntityId, request.EntityType);
         if (reaction is null)
         {
             return Error.NotFound(description: $"Reaction For ListenerId '{request.ListenerId}' is not found.");

@@ -88,7 +88,7 @@ public class EpisodeResponseAttacher : ResponseAttacher<EpisodeResponseAttacher,
 
     private async Task AttachReactionForOneAsync(Guid listenerId)
     {
-        var reaction = await _reactionRepository.GetAsync(listenerId, SingleResponse.Id);
+        var reaction = await _reactionRepository.GetAsync(listenerId, SingleResponse.Id, EntityType.Episode);
 
         SingleResponse.ListenerReaction = reaction?.ToResponse();
     }

@@ -10,6 +10,11 @@ public class PodcastRepository : Repository<Podcast, IPodcastRepository>, IPodca
     {
     }
 
+    public Task<IQueryable<Podcast>> GetCreatorPodcasts(Guid creatorId)
+    {
+        return Task.FromResult(Query.Where(podcast => podcast.CreatorId == creatorId));
+    }
+
     public IPodcastRepository IncludeEpisodes(bool includeEpisodes = true)
     {
         if (includeEpisodes)

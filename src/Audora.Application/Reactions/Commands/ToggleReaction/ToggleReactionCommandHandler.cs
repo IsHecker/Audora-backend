@@ -25,7 +25,7 @@ public class ToggleReactionCommandHandler : ICommandHandler<ToggleReactionComman
     var newReaction = request.Reaction;
 
     var listenerReaction = await _reactionRepository.AsTracking()
-        .GetAsync(newReaction.ListenerId, newReaction.EntityId);
+        .GetAsync(newReaction.ListenerId, newReaction.EntityId, newReaction.EntityType);
 
     var reactionStat = await _reactionStatRepository.AsTracking()
         .GetByReactionAsync(newReaction);
