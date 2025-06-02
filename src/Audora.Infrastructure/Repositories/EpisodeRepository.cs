@@ -3,7 +3,7 @@ using Audora.Domain.Entities;
 
 namespace Audora.Infrastructure.Repositories;
 
-public class EpisodeRepository : Repository<Episode>, IEpisodeRepository
+public class EpisodeRepository : Repository<Episode, IEpisodeRepository>, IEpisodeRepository
 {
     public EpisodeRepository(ApplicationDbContext context) : base(context)
     {
@@ -16,11 +16,11 @@ public class EpisodeRepository : Repository<Episode>, IEpisodeRepository
             .AsQueryable());
     }
 
-    public async Task<IQueryable<Episode>> GetAllByPlaylistIdAsync(Guid playlistId)
+    public Task<IQueryable<Episode>> GetAllByPlaylistIdAsync(Guid playlistId)
     {
-        return Context.PlaylistEpisodes
+        return Task.FromResult(Context.PlaylistEpisodes
             .Where(pe => pe.PlaylistId == playlistId)
             .OrderBy(pe => pe.Order)
-            .Join(Query, pe => pe.EpisodeId, e => e.Id, (pe, e) => e);
+            .Join(Query, pe => pe.EpisodeId, e => e.Id, (pe, e) => e));
     }
 }

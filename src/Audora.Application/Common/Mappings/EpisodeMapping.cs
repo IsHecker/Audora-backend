@@ -1,3 +1,4 @@
+using Audora.Contracts.EngagementStats.Responses;
 using Audora.Contracts.Episodes.Requests;
 using Audora.Contracts.Episodes.Responses;
 using Audora.Domain.Entities;
@@ -79,9 +80,9 @@ public static class EpisodeMapping
     }
 
 
-    public static EpisodeResponse WithStats(this EpisodeResponse response, EpisodeStat stat, EngagementStat engagement)
+    public static EpisodeResponse WithStats(this EpisodeResponse response, EpisodeStat stat, EngagementStatsResponse engagementResponse)
     {
-        response.EpisodeStat = stat.ToResponse(engagement);
+        response.EpisodeStat = stat.ToResponse(engagementResponse);
         return response;
     }
 

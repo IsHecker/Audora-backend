@@ -21,5 +21,5 @@ public class PodcastRating : Entity
     {
     }
 
-    public void SetRating(byte rating) => Rating = rating;
+    public void ChangeRating(byte rating) => Rating = rating;
 }

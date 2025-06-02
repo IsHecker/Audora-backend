@@ -18,15 +18,17 @@ public static class DependencyInjection
 
 
         services.AddScoped<ICommentRepository, CommentRepository>();
-        services.AddScoped<IEngagementStatRepository, EngagementStatRepository>();
+        services.AddScoped<ICommentStatRepository, CommentStatRepository>();
         services.AddScoped<IEpisodeRepository, EpisodeRepository>();
         services.AddScoped<IEpisodeStatRepository, EpisodeStatRepository>();
         services.AddScoped<IFollowRepository, FollowRepository>();
+        services.AddScoped<IReactionRepository, ReactionRepository>();
+        services.AddScoped<IReactionStatRepository, ReactionStatsRepository>();
         services.AddScoped<IPlaybackSessionRepository, PlaybackSessionRepository>();
         services.AddScoped<IPodcastRatingRepository, PodcastRatingRepository>();
         services.AddScoped<IPodcastRepository, PodcastRepository>();
         services.AddScoped<IPodcastStatRepository, PodcastStatRepository>();
-        services.AddScoped<IReactionRepository, ReactionRepository>();
+        services.AddScoped<IPlaylistRepository, PlaylistRepository>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
 

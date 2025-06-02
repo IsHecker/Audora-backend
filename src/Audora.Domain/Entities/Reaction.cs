@@ -1,18 +1,19 @@
 using Audora.Domain.Common;
+using Audora.Domain.Common.Enums;
 
 namespace Audora.Domain.Entities;
 
 public class Reaction : Entity
 {
-    public Guid ListenerId { get; init; }
     public Guid EntityId { get; init; }
-    public string EntityType { get; init; } = null!;
-    public ReactionType ReactionType { get; init; }
+    public Guid ListenerId { get; init; }
+    public EntityType EntityType { get; init; }
+    public ReactionType ReactionType { get; private set; }
 
     public Reaction(
         Guid listenerId,
         Guid entityId,
-        string entityType,
+        EntityType entityType,
         ReactionType reactionType)
     {
         ListenerId = listenerId;
@@ -24,6 +25,8 @@ public class Reaction : Entity
     private Reaction()
     {
     }
+
+    public void UpdateReactionType(ReactionType reactionType) => ReactionType = reactionType;
 }
 
 public enum ReactionType : byte

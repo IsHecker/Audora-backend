@@ -5,7 +5,7 @@ using Audora.Application.Common.Models;
 using Audora.Application.Common.Results;
 using Audora.Application.Common.Services;
 using Audora.Contracts.Podcasts.Responses;
-using Audora.Domain.Entities;
+using Audora.Domain.Common.Enums;
 
 namespace Audora.Application.Podcasts.Queries.ListFollowedPodcasts;
 
@@ -30,7 +30,7 @@ public class ListFollowedPodcastsQueryHandler : IQueryHandler<ListFollowedPodcas
       CancellationToken cancellationToken)
   {
     var followedPodcastIds = (await _followRepository.GetListenerFollows(request.ListenerId))
-        .Where(f => f.FollowTarget == FollowTarget.Podcast)
+        .Where(f => f.EntityType == EntityType.Podcast)
         .Select(f => f.EntityId)
         .Paginate(request.Pagination);
 

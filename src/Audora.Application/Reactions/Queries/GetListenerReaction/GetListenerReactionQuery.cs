@@ -7,10 +7,10 @@ using Audora.Domain.Common.Enums;
 
 namespace Audora.Application.Reactions.Queries.GetListenerReaction;
 
-public record GetListenerReactionQuery(Guid ListenerId, Guid EntityId, EntityType EntityType) : IQuery<ListenerReactionResponse>;
+public record GetListenerReactionQuery(Guid ListenerId, Guid EntityId, EntityType EntityType) : IQuery<ReactionResponse>;
 
 public class GetListenerReactionQueryHandler
-    : IQueryHandler<GetListenerReactionQuery, ListenerReactionResponse>
+    : IQueryHandler<GetListenerReactionQuery, ReactionResponse>
 {
     private readonly IReactionRepository _reactionRepository;
 
@@ -19,7 +19,7 @@ public class GetListenerReactionQueryHandler
         _reactionRepository = reactionRepository;
     }
 
-    public async Task<Result<ListenerReactionResponse>> Handle(GetListenerReactionQuery request,
+    public async Task<Result<ReactionResponse>> Handle(GetListenerReactionQuery request,
         CancellationToken cancellationToken)
     {
         var reaction = await _reactionRepository.GetAsync(request.ListenerId, request.EntityId);

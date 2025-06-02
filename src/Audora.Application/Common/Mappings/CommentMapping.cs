@@ -1,13 +1,20 @@
+using Audora.Contracts.Comments.Requests;
 using Audora.Contracts.Comments.Responses;
+using Audora.Contracts.EngagementStats.Responses;
+using Audora.Domain.Common.Enums;
 using Audora.Domain.Entities;
 
 namespace Audora.Application.Common.Mappings;
 
 public static class CommentMapping
 {
+    public static Comment ToDomain(this CreateCommentRequest request, Guid entityId, Guid listenerId, EntityType entityType)
+    {
+        return new Comment(listenerId, entityId, entityType, request.Content, request.ParentId);
+    }
+
     public static CommentResponse ToResponse(this Comment comment,
-        EngagementStat engagementStat,
-        Reaction listenerReaction)
+        EngagementStatsResponse? engagementStat)
     {
         return new CommentResponse
         {
@@ -17,18 +24,25 @@ public static class CommentMapping
             ParentId = comment.ParentId,
             PostedAt = comment.CreatedAt,
             ListenerId = comment.ListenerId,
-            Engagements = engagementStat.ToResponse(listenerReaction)
+            Engagements = engagementStat
         };
     }
 
-    public static CommentsResponse ToResponse(this IQueryable<Comment> comments,
-        Dictionary<Guid, EngagementStat> engagementStatsDict,
+    public static IEnumerable<CommentResponse> ToResponse(this IEnumerable<Comment> comments,
+        Dictionary<Guid, EngagementStatsResponse> engagementStatsResponseDict,
         Dictionary<Guid, Reaction> listenerReactionsDict)
     {
-        return new CommentsResponse
+        return comments.Select(comment =>
         {
-            Comments = comments.Select(comment =>
-                comment.ToResponse(engagementStatsDict[comment.Id], listenerReactionsDict[comment.Id]))
-        };
+            engagementStatsResponseDict.TryGetValue(comment.Id, out var engagementStat);
+
+            if (engagementStat is not null)
+            {
+                listenerReactionsDict.TryGetValue(comment.Id, out var listenerReaction);
+                engagementStat.ListenerReaction = listenerReaction?.ToResponse();
+            }
+
+            return comment.ToResponse(engagementStat);
+        });
     }
 }

@@ -1,9 +1,6 @@
 using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Application.Common.Abstractions.Messaging;
-using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Results;
-using Audora.Contracts.Episodes.Responses;
-using Audora.Domain.Common.Enums;
 using Audora.Domain.Entities;
 
 namespace Audora.Application.Episodes.Commands.CreateEpisode;
@@ -14,19 +11,16 @@ public class CreateEpisodeCommandHandler : ICommandHandler<CreateEpisodeCommand,
 {
     private readonly IPodcastRepository _podcastRepository;
     private readonly IEpisodeStatRepository _episodeStatRepository;
-    private readonly IEngagementStatRepository _engagementStatRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public CreateEpisodeCommandHandler(
         IPodcastRepository podcastRepository,
         IEpisodeStatRepository episodeStatRepository,
-        IUnitOfWork unitOfWork,
-        IEngagementStatRepository engagementStatRepository)
+        IUnitOfWork unitOfWork)
     {
         _podcastRepository = podcastRepository;
         _episodeStatRepository = episodeStatRepository;
         _unitOfWork = unitOfWork;
-        _engagementStatRepository = engagementStatRepository;
     }
 
     public async Task<Result<Episode>> Handle(CreateEpisodeCommand request, CancellationToken cancellationToken)
@@ -42,14 +36,11 @@ public class CreateEpisodeCommandHandler : ICommandHandler<CreateEpisodeCommand,
 
         podcast.AddEpisode(episode);
 
+        // to access episode id.
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
 
         var episodeStat = new EpisodeStat(episode.Id, podcast.Id, episode.Name);
         await _episodeStatRepository.AddAsync(episodeStat);
-
-        var engagementStat = new EngagementStat(episode.Id, EntityType.Episode);
-        await _engagementStatRepository.AddAsync(engagementStat);
 
         return request.Episode;
     }

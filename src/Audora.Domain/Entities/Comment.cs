@@ -6,17 +6,17 @@ namespace Audora.Domain.Entities;
 public class Comment : Entity
 {
     public Guid ListenerId { get; init; }
-    public Guid ParentId { get; init; }
     public Guid EntityId { get; init; }
+    public Guid? ParentId { get; init; }
     public EntityType EntityType { get; init; }
     public string Content { get; private set; } = null!;
 
     public Comment(
         Guid listenerId,
-        Guid parentId,
         Guid entityId,
         EntityType entityType,
-        string content)
+        string content,
+        Guid? parentId = null)
     {
         ListenerId = listenerId;
         ParentId = parentId;
@@ -28,8 +28,8 @@ public class Comment : Entity
     private Comment()
     {
     }
-    
-    public void EditContent(string newContent)
+
+    public void ChangeContent(string newContent)
     {
         Content = newContent;
     }

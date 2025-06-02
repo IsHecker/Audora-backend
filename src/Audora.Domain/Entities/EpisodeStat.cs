@@ -44,7 +44,7 @@ public class EpisodeStat : Entity
     {
     }
 
-    public void UpdateEpisodeName(string newEpisodeName) => EpisodeName = newEpisodeName;
+    public void ChangeEpisodeName(string newEpisodeName) => EpisodeName = newEpisodeName;
 
     public void IncreaseDownloadCount() => Downloads++;
 

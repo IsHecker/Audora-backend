@@ -90,7 +90,12 @@ public class Podcast : Entity
         TotalEpisodes++;
     }
 
-    public void UpdateAverageRating(float newAverageRating) => AverageRating = newAverageRating;
+    public void ChangeRating(float newAverageRating, int newTotalRatings)
+    {
+        AverageRating = newAverageRating;
+        TotalRatings = newTotalRatings;
+    }
+
     public void UpdateTotalRating(int newTotalRatings) => TotalRatings = newTotalRatings;
 
     public void Update(Podcast podcastToUpdate)

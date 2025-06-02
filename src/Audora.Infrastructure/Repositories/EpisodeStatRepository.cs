@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audora.Infrastructure.Repositories;
 
-public class EpisodeStatRepository : Repository<EpisodeStat>, IEpisodeStatRepository
+public class EpisodeStatRepository : Repository<EpisodeStat, IEpisodeStatRepository>, IEpisodeStatRepository
 {
     public EpisodeStatRepository(ApplicationDbContext context) : base(context)
     {

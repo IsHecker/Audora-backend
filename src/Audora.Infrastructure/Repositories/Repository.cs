@@ -4,37 +4,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audora.Infrastructure.Repositories;
 
-public abstract class Repository<T> : IRepository<T> where T : Entity
+public abstract class Repository<TEntity, TRepository>
+    : BaseRepository<TEntity, TRepository>,
+    IRepository<TEntity, TRepository>
+    where TEntity : Entity
+    where TRepository : IRepository<TEntity, TRepository>
 {
-    protected readonly ApplicationDbContext Context;
-
-    protected IQueryable<T> Query { get; set; }
-
-    protected Repository(ApplicationDbContext context)
+    protected Repository(ApplicationDbContext context) : base(context)
     {
-        Context = context;
-        Query = Context.Set<T>();
     }
 
-    public virtual Task<IQueryable<T>> GetAllAsync()
-    {
-        return Task.FromResult(Query);
-    }
-
-    public virtual async Task<T?> GetByIdAsync(Guid id)
+    public virtual async Task<TEntity?> GetByIdAsync(Guid id)
     {
         return await Query.FirstOrDefaultAsync(entity => entity.Id == id);
-    }
-
-    public virtual async Task AddAsync(T entity)
-    {
-        await Context.AddAsync(entity);
-    }
-
-    public virtual Task UpdateAsync(T entity)
-    {
-        Context.Update(entity);
-        return Task.CompletedTask;
     }
 
     public virtual async Task<bool> DeleteAsync(Guid id)
@@ -42,14 +24,13 @@ public abstract class Repository<T> : IRepository<T> where T : Entity
         return await Query.Where(e => e.Id == id).ExecuteDeleteAsync() > 0;
     }
 
-    public virtual async Task<bool> DeleteAsync(T entity)
+    public virtual async Task<bool> DeleteAsync(TEntity entity)
     {
-        return await Query.Where(e => e.Id == entity.Id).ExecuteDeleteAsync() > 0;
+        return await DeleteAsync(entity.Id);
     }
 
-    public IRepository<T> AsTracking()
+    public async Task<bool> ExistsAsync(Guid id)
     {
-        Query = Query.AsTracking();
-        return this;
+        return await Query.AnyAsync(entity => entity.Id == id);
     }
 }

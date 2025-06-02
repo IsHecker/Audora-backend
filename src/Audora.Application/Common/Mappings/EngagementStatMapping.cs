@@ -1,17 +1,20 @@
-using Audora.Contracts.Reactions.Responses;
+using Audora.Contracts.EngagementStats.Responses;
 using Audora.Domain.Entities;
 
 namespace Audora.Application.Common.Mappings;
 
 public static class EngagementStatMapping
 {
-    public static EngagementStatResponse ToResponse(this EngagementStat engagementStat, Reaction? listenerReaction)
+    public static EngagementStatsResponse ToResponse(
+        IEnumerable<ReactionStat>? reactionStats,
+        int commentCount,
+        Reaction? listenerReaction = null)
     {
-        return new EngagementStatResponse
+        return new EngagementStatsResponse
         {
-            Likes = engagementStat.Likes,
-            Dislikes = engagementStat.Dislikes,
-            Comments = engagementStat.Comments,
+            CommentCount = commentCount,
+            Reactions = reactionStats?.ToDictionary(r => r.ReactionType.ToString(), r => r.Count),
+
             ListenerReaction = listenerReaction?.ToResponse()
         };
     }

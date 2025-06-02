@@ -8,6 +8,7 @@ using Audora.Application.Podcasts.Queries.GetPodcastById;
 using Audora.Application.Podcasts.Queries.ListCreatorPodcasts;
 using Audora.Application.Podcasts.Queries.ListFollowedPodcasts;
 using Audora.Application.Podcasts.Queries.ListPodcasts;
+using Audora.Application.Stats.Queries.GetPodcastStats;
 using Audora.Contracts.Podcasts.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -56,6 +57,13 @@ public class PodcastController : ApiController
         return listResult.Match(Ok, Problem);
     }
 
+    [HttpGet(ApiEndpoints.Podcasts.GetStats)]
+    public async Task<IActionResult> GetPodcastStats(Guid podcastId)
+    {
+        var query = new GetPodcastStatsQuery(podcastId);
+        var getPodcastStatsQueryResult = await _sender.Send(query);
+        return getPodcastStatsQueryResult.Match(Ok, Problem);
+    }
 
     [HttpPost(ApiEndpoints.Podcasts.Create)]
     public async Task<IActionResult> CreatePodcast(CreatePodcastRequest request)

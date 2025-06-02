@@ -15,9 +15,9 @@ public static class DependencyInjection
             options.AddOpenBehavior(typeof(UnitOfWorkBehaviour<,>));
         });
 
-        services.AddScoped<ReactionTogglerService>();
         services.AddScoped<PodcastResponseAttacher>();
         services.AddScoped<EpisodeResponseAttacher>();
+        services.AddScoped<EngagementStatsService>();
 
         return services;
     }

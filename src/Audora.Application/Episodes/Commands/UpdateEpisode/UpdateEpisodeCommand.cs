@@ -32,10 +32,10 @@ public class UpdateEpisodeCommandHandler : ICommandHandler<UpdateEpisodeCommand>
 
         if (episode.Name != updatedEpisode.Name)
         {
-            var episodeStat = await ((IEpisodeStatRepository)_episodeStatRepository.AsTracking())
+            var episodeStat = await _episodeStatRepository.AsTracking()
                 .GetByEpisodeIdAsync(episode.Id);
 
-            episodeStat.UpdateEpisodeName(updatedEpisode.Name);
+            episodeStat.ChangeEpisodeName(updatedEpisode.Name);
         }
 
         episode.Update(updatedEpisode);

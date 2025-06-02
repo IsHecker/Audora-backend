@@ -7,27 +7,21 @@ public class PodcastStat : Entity
     private readonly TimeSpan _returningListenerTimeSpan = TimeSpan.FromSeconds(20); // normally it's 30 days.
 
     public Guid PodcastId { get; init; }
-    public float AverageRating { get; private set; }
-    public int TotalRatings { get; private set; }
-    public long TotalPlays { get; private set; }
-    public long TotalFollowers { get; private set; }
-    public int TotalReturningListeners { get; private set; }
-    public float RetentionRate { get; private set; }
-    public long TotalListeningTime { get; private set; }
+    public string PodcastName { get; private set; } = null!;
+    public float AverageRating { get; private set; } = 0;
+    public int TotalRatings { get; private set; } = 0;
+    public long TotalPlays { get; private set; } = 0;
+    public long TotalFollowers { get; private set; } = 0;
+    public int TotalReturningListeners { get; private set; } = 0;
+    public float RetentionRate { get; private set; } = 0;
+    public long TotalListeningTime { get; private set; } = 0;
 
     public Podcast Podcast { get; init; } = null!;
-    // public ICollection<EpisodeStat> EpisodesStats { get; private set; } = [];
 
-    public PodcastStat(Guid podcastId, float averageRating, int totalRatings, long totalPlays, long totalFollowers,
-        float retentionRate, long totalListeningTime)
+    public PodcastStat(Guid podcastId, string podcastName)
     {
         PodcastId = podcastId;
-        AverageRating = averageRating;
-        TotalRatings = totalRatings;
-        TotalPlays = totalPlays;
-        TotalFollowers = totalFollowers;
-        RetentionRate = retentionRate;
-        TotalListeningTime = totalListeningTime;
+        PodcastName = podcastName;
     }
 
     private PodcastStat()
@@ -40,7 +34,7 @@ public class PodcastStat : Entity
         AverageRating = float.Round(ratingsSum / ++TotalRatings, 1);
     }
 
-    public void ReplaceRating(byte oldRating, byte newRating)
+    public void ReplaceListenerRating(byte oldRating, byte newRating)
     {
         var ratingsSum = AverageRating * TotalRatings - oldRating + newRating;
         AverageRating = float.Round(ratingsSum / TotalRatings, 1);
@@ -50,6 +44,8 @@ public class PodcastStat : Entity
             TotalRatings--;
         }
     }
+
+    public void ChangePodcastName(string newPodcastName) => PodcastName = newPodcastName;
 
     public void AddFollower() => TotalFollowers++;
 

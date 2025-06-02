@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audora.Infrastructure.Repositories;
 
-public class PodcastStatRepository : Repository<PodcastStat>, IPodcastStatRepository
+public class PodcastStatRepository : Repository<PodcastStat, IPodcastStatRepository>, IPodcastStatRepository
 {
     public PodcastStatRepository(ApplicationDbContext context) : base(context)
     {
     }
 
-    public async Task<PodcastStat> GetByPodcastIdAsync(Guid podcastId)
+    public async Task<PodcastStat?> GetByPodcastIdAsync(Guid podcastId)
     {
-        return await Query.FirstAsync(p => p.PodcastId == podcastId);
+        return await Query.FirstOrDefaultAsync(p => p.PodcastId == podcastId);
     }
 
     public IPodcastStatRepository IncludePodcast(bool includePodcast = true)

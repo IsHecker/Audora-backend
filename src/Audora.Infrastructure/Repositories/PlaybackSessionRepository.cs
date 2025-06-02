@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audora.Infrastructure.Repositories;
 
-public class PlaybackSessionRepository : Repository<PlaybackSession>, IPlaybackSessionRepository
+public class PlaybackSessionRepository : Repository<PlaybackSession, IPlaybackSessionRepository>, IPlaybackSessionRepository
 {
     public PlaybackSessionRepository(ApplicationDbContext context) : base(context)
     {

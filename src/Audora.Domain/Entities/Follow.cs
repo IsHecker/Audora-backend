@@ -1,29 +1,24 @@
 using Audora.Domain.Common;
+using Audora.Domain.Common.Enums;
 
 namespace Audora.Domain.Entities;
 
 public class Follow : Entity
 {
-    public Guid FollowerId { get; init; }
+    public Guid ListenerId { get; init; }
     public Guid EntityId { get; init; }
-    public FollowTarget FollowTarget { get; init; }
+    public EntityType EntityType { get; init; }
     public DateTime FollowedAt { get; init; }
 
-    public Follow(Guid followerId, Guid entityId, FollowTarget followTarget)
+    public Follow(Guid listenerId, Guid entityId, EntityType followTarget)
     {
-        FollowerId = followerId;
+        ListenerId = listenerId;
         EntityId = entityId;
-        FollowTarget = followTarget;
+        EntityType = followTarget;
         FollowedAt = DateTime.UtcNow;
     }
 
     private Follow()
     {
     }
-}
-
-public enum FollowTarget : byte
-{
-    Creator,
-    Podcast
 }

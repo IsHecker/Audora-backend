@@ -22,20 +22,18 @@ namespace Audora.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Audora.Domain.Entities.EngagementStat", b =>
+            modelBuilder.Entity("Audora.Domain.Entities.Comment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Comments")
-                        .HasColumnType("int");
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("Dislikes")
-                        .HasColumnType("int");
 
                     b.Property<Guid>("EntityId")
                         .HasColumnType("uniqueidentifier");
@@ -43,15 +41,34 @@ namespace Audora.Infrastructure.Migrations
                     b.Property<int>("EntityType")
                         .HasColumnType("int");
 
-                    b.Property<int>("Likes")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ListenerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("EngagementStats");
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Audora.Domain.Entities.CommentStat", b =>
+                {
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("EntityType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CommentCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("EntityId", "EntityType");
+
+                    b.ToTable("CommentStats");
                 });
 
             modelBuilder.Entity("Audora.Domain.Entities.Episode", b =>
@@ -134,7 +151,7 @@ namespace Audora.Infrastructure.Migrations
                     b.Property<int>("PlayCount")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("PodcastStatId")
+                    b.Property<Guid>("PodcastId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Replays")
@@ -165,13 +182,13 @@ namespace Audora.Infrastructure.Migrations
                     b.Property<Guid>("EntityId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte>("FollowTarget")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("EntityType")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("FollowedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("FollowerId")
+                    b.Property<Guid>("ListenerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -314,6 +331,9 @@ namespace Audora.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PodcastId")
+                        .IsUnique();
+
                     b.ToTable("PodcastRatings");
                 });
 
@@ -331,6 +351,10 @@ namespace Audora.Infrastructure.Migrations
 
                     b.Property<Guid>("PodcastId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PodcastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("RetentionRate")
                         .HasColumnType("real");
@@ -372,9 +396,8 @@ namespace Audora.Infrastructure.Migrations
                     b.Property<Guid>("EntityId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("EntityType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("EntityType")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("ListenerId")
                         .HasColumnType("uniqueidentifier");
@@ -388,6 +411,25 @@ namespace Audora.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Reactions");
+                });
+
+            modelBuilder.Entity("Audora.Domain.Entities.ReactionStat", b =>
+                {
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("EntityType")
+                        .HasColumnType("int");
+
+                    b.Property<byte>("ReactionType")
+                        .HasColumnType("tinyint");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.HasKey("EntityId", "EntityType", "ReactionType");
+
+                    b.ToTable("ReactionStats");
                 });
 
             modelBuilder.Entity("Audora.Domain.Entities.Tag", b =>
@@ -430,6 +472,15 @@ namespace Audora.Infrastructure.Migrations
                     b.HasOne("Audora.Domain.Entities.Playlist", null)
                         .WithMany()
                         .HasForeignKey("PlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Audora.Domain.Entities.PodcastRating", b =>
+                {
+                    b.HasOne("Audora.Domain.Entities.Podcast", null)
+                        .WithOne()
+                        .HasForeignKey("Audora.Domain.Entities.PodcastRating", "PodcastId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

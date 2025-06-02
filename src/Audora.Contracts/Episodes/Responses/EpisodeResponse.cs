@@ -14,6 +14,6 @@ public class EpisodeResponse
     public Guid AudioFileId { get; init; }
     public int EpisodeNumber { get; init; }
     public DateTime ReleaseDate { get; init; }
-    public ListenerReactionResponse? ListenerReaction { get; set; }
-    public EpisodeAnalyticsResponse? EpisodeStat { get; set; }
+    public ReactionResponse? ListenerReaction { get; set; }
+    public EpisodeStatsResponse? EpisodeStat { get; set; }
 }

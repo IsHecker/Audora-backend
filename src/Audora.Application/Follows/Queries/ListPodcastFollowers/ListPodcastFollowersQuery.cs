@@ -27,7 +27,7 @@ public class ListPodcastFollowersQueryHandler : IQueryHandler<ListPodcastFollowe
         CancellationToken cancellationToken)
     {
         var followerIds = (await _followRepository.GetAllByEntityIdAsync(request.PodcastId))
-            .Select(f => f.FollowerId);
+            .Select(f => f.ListenerId);
 
         var users = await _userService.GetUsersByIdsAsync(followerIds.Paginate(request.Pagination));
 

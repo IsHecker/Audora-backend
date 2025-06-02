@@ -2,7 +2,7 @@ using Audora.Domain.Entities;
 
 namespace Audora.Application.Common.Abstractions.Interfaces;
 
-public interface IFollowRepository : IRepository<Follow>
+public interface IFollowRepository : IRepository<Follow, IFollowRepository>
 {
     Task<IQueryable<Follow>> GetAllByEntityIdAsync(Guid entityId);
     Task<IQueryable<Follow>> GetListenerFollows(Guid followerId);

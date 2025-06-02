@@ -1,12 +1,12 @@
 using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Results;
+using Audora.Domain.Common.Enums;
 using Audora.Domain.Entities;
-using MediatR;
 
 namespace Audora.Application.Follows.Commands.ToggleFollow;
 
-public record TogglePodcastFollowCommand(Guid FollowerId, Guid PodcastId) : ICommand;
+public record TogglePodcastFollowCommand(Guid ListenerId, Guid PodcastId) : ICommand;
 
 public class TogglePodcastFollowCommandHandler : ICommandHandler<TogglePodcastFollowCommand>
 {
@@ -22,14 +22,18 @@ public class TogglePodcastFollowCommandHandler : ICommandHandler<TogglePodcastFo
 
     public async Task<Result> Handle(TogglePodcastFollowCommand request, CancellationToken cancellationToken)
     {
-        var listenerFollow = (await _followRepository.GetListenerFollows(request.FollowerId))
-            .FirstOrDefault(f => f.EntityId == request.PodcastId);
+        // TODO: modify to be on all entities not just podcast.
 
-        var podcastStat = await _podcastStatRepository.GetByPodcastIdAsync(request.PodcastId);
+        var podcastStat = await _podcastStatRepository.AsTracking().GetByPodcastIdAsync(request.PodcastId);
+        if (podcastStat is null)
+            return Error.NotFound(description: $"PodcastStat with podcast Id '{request.PodcastId} is not found.'");
+
+        var listenerFollow = (await _followRepository.GetListenerFollows(request.ListenerId))
+            .FirstOrDefault(f => f.EntityId == request.PodcastId);
 
         if (listenerFollow is null)
         {
-            var newFollow = new Follow(request.FollowerId, request.PodcastId, FollowTarget.Podcast);
+            var newFollow = new Follow(request.ListenerId, request.PodcastId, EntityType.Podcast);
 
             await _followRepository.AddAsync(newFollow);
             podcastStat.AddFollower();

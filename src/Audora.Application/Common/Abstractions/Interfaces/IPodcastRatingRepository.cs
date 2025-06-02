@@ -2,7 +2,7 @@ using Audora.Domain.Entities;
 
 namespace Audora.Application.Common.Abstractions.Interfaces;
 
-public interface IPodcastRatingRepository : IRepository<PodcastRating>
+public interface IPodcastRatingRepository : IRepository<PodcastRating, IPodcastRatingRepository>
 {
     Task<PodcastRating?> GetByEntityIdAsync(Guid podcastId);
     Task<IQueryable<PodcastRating>> GetAllByListenerIdAsync(Guid listenerId);

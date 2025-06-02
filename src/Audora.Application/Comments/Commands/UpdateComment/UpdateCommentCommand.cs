@@ -24,7 +24,7 @@ public class UpdateCommentCommandHandler : ICommandHandler<UpdateCommentCommand>
         if (comment is null)
             return Error.NotFound(description: $"Comment with Id '{request.CommentId}' is not found.");
 
-        comment.EditContent(request.Content);
+        comment.ChangeContent(request.Content);
 
         return Result.Success;
     }

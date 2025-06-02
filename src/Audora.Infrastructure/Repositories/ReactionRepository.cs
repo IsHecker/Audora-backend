@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audora.Infrastructure.Repositories;
 
-public class ReactionRepository : Repository<Reaction>, IReactionRepository
+public class ReactionRepository : Repository<Reaction, IReactionRepository>, IReactionRepository
 {
     public ReactionRepository(ApplicationDbContext context) : base(context)
     {

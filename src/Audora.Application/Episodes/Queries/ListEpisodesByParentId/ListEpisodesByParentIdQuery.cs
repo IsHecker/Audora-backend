@@ -23,12 +23,19 @@ public class ListEpisodesByParentIdQueryHandler : IQueryHandler<ListEpisodesByPa
 {
     private readonly IEpisodeRepository _episodeRepository;
     private readonly EpisodeResponseAttacher _episodeResponseAttacher;
+    private readonly IPodcastRepository _podcastRepository;
+    private readonly IPlaylistRepository _playlistRepository;
 
-    public ListEpisodesByParentIdQueryHandler(IEpisodeRepository episodeRepository,
-        EpisodeResponseAttacher episodeResponseAttacher)
+    public ListEpisodesByParentIdQueryHandler(
+        IEpisodeRepository episodeRepository,
+        EpisodeResponseAttacher episodeResponseAttacher,
+        IPodcastRepository podcastRepository,
+        IPlaylistRepository playlistRepository)
     {
         _episodeRepository = episodeRepository;
         _episodeResponseAttacher = episodeResponseAttacher;
+        _podcastRepository = podcastRepository;
+        _playlistRepository = playlistRepository;
     }
 
     public async Task<Result<PagedResponse<EpisodeResponse>>> Handle(ListEpisodesByParentIdQuery request,
@@ -36,7 +43,12 @@ public class ListEpisodesByParentIdQueryHandler : IQueryHandler<ListEpisodesByPa
     {
         var pagination = request.Pagination;
 
-        var episodes = await GetParentEpisodes(request.ParentId, request.ParentType);
+        var episodesResult = await GetParentEpisodes(request.ParentId, request.ParentType);
+
+        if (episodesResult.IsError)
+            return episodesResult.Errors;
+
+        var episodes = episodesResult.Value;
 
         var response = episodes.Paginate(pagination).ToResponse().ToList();
 
@@ -49,13 +61,24 @@ public class ListEpisodesByParentIdQueryHandler : IQueryHandler<ListEpisodesByPa
         return response.ToPagedResponse(pagination, episodes.Count());
     }
 
-    private async Task<IQueryable<Episode>> GetParentEpisodes(Guid parentId, string parentType)
+    private async Task<Result<IQueryable<Episode>>> GetParentEpisodes(Guid parentId, string parentType)
     {
-        return parentType.ToLower() switch
+        switch (parentType.ToLower())
         {
-            "playlists" => await _episodeRepository.GetAllByPlaylistIdAsync(parentId),
-            "podcasts" => await _episodeRepository.GetAllByPodcastIdAsync(parentId),
-            _ => throw new NotImplementedException()
-        };
+            case "playlists":
+                if (!await _playlistRepository.ExistsAsync(parentId))
+                    return Error.NotFound(description: $"Playlist with Id '{parentId}' is not found.");
+
+                return (await _episodeRepository.GetAllByPlaylistIdAsync(parentId)).ToResult();
+
+            case "podcasts":
+                if (!await _podcastRepository.ExistsAsync(parentId))
+                    return Error.NotFound(description: $"Podcast with Id '{parentId}' is not found.");
+
+                return (await _episodeRepository.GetAllByPodcastIdAsync(parentId)).ToResult();
+
+            default:
+                throw new NotImplementedException();
+        }
     }
 }

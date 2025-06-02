@@ -1,5 +1,3 @@
-using Audora.Application.Analytics.Queries.GetEpisodeAnalytics;
-using Audora.Application.Analytics.Queries.ListEpisodesAnalytics;
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
 using Audora.Application.Episodes.Commands.CreateEpisode;
@@ -7,6 +5,7 @@ using Audora.Application.Episodes.Commands.DeleteEpisode;
 using Audora.Application.Episodes.Commands.UpdateEpisode;
 using Audora.Application.Episodes.Queries.GetEpisodeById;
 using Audora.Application.Episodes.Queries.ListEpisodesByParentId;
+using Audora.Application.Stats.Queries.GetEpisodeStats;
 using Audora.Contracts.Episodes.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -50,7 +49,7 @@ public class EpisodeController : ApiController
     [HttpGet(ApiEndpoints.Episodes.GetStats)]
     public async Task<IActionResult> GetEpisodeStats(Guid episodeId)
     {
-        var query = new GetEpisodeAnalyticsQuery(episodeId);
+        var query = new GetEpisodeStatsQuery(episodeId);
         var getEpisodeAnalyticsResult = await _sender.Send(query);
         return getEpisodeAnalyticsResult.Match(Ok, Problem);
     }

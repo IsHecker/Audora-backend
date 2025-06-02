@@ -1,13 +1,11 @@
 namespace Audora.Application.Common.Abstractions.Interfaces;
 
-public interface IRepository<T>
+public interface IRepository<TEntity, TRepository>
+    : IBaseRepository<TEntity, TRepository>
+    where TRepository : IBaseRepository<TEntity, TRepository>
 {
-    Task<IQueryable<T>> GetAllAsync();
-    Task<T?> GetByIdAsync(Guid id);
-    Task AddAsync(T entity);
-    Task UpdateAsync(T entity);
+    Task<TEntity?> GetByIdAsync(Guid id);
     Task<bool> DeleteAsync(Guid id);
-    Task<bool> DeleteAsync(T entity);
-
-    IRepository<T> AsTracking();
+    Task<bool> DeleteAsync(TEntity entity);
+    Task<bool> ExistsAsync(Guid id);
 }

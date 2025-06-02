@@ -12,10 +12,14 @@ public record CreatePodcastCommand(Podcast Podcast, IEnumerable<Episode>? Episod
 public class CreatePodcastCommandHandler : ICommandHandler<CreatePodcastCommand, PodcastResponse>
 {
     private readonly IPodcastRepository _podcastRepository;
+    private readonly IPodcastStatRepository _podcastStatRepository;
 
-    public CreatePodcastCommandHandler(IPodcastRepository podcastRepository)
+    public CreatePodcastCommandHandler(
+        IPodcastRepository podcastRepository,
+        IPodcastStatRepository podcastStatRepository)
     {
         _podcastRepository = podcastRepository;
+        _podcastStatRepository = podcastStatRepository;
     }
 
     public async Task<Result<PodcastResponse>> Handle(CreatePodcastCommand request, CancellationToken cancellationToken)
@@ -28,6 +32,7 @@ public class CreatePodcastCommandHandler : ICommandHandler<CreatePodcastCommand,
         }
 
         await _podcastRepository.AddAsync(podcast);
+        await _podcastStatRepository.AddAsync(new PodcastStat(podcast.Id, podcast.Name));
 
         return podcast.ToResponse();
     }

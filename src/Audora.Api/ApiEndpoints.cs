@@ -9,6 +9,9 @@ public static class ApiEndpoints
     private const string ListenersBase = $"{ApiBase}/listeners";
     private const string PlaylistsBase = $"{ApiBase}/playlists";
     private const string SearchBase = $"{ApiBase}/search";
+    private const string RatingsBase = $"{ApiBase}/ratings";
+    private const string CommentsBase = $"{ApiBase}/comments";
+    private const string FollowsBase = $"{ApiBase}/follows";
 
     public static class Podcasts
     {
@@ -32,6 +35,9 @@ public static class ApiEndpoints
         public const string GetById = $"{EpisodesBase}/{{episodeId:guid}}";
         public const string GetBySlug = $"{EpisodesBase}/slug/{{slug:guid}}";
         public const string GetStats = $"{GetById}/stats";
+        public const string ListComments = $"{GetById}/comments";
+        public const string ReactOnEpisode = $"{GetById}/react";
+        public const string GetReactions = $"{GetById}/reactions";
 
         public const string Create = EpisodesBase;
         public const string Update = $"{GetById}";
@@ -62,5 +68,37 @@ public static class ApiEndpoints
     {
         public const string GlobalSearch = SearchBase;
         public const string MixedSearch = $"{SearchBase}/mixed";
+    }
+
+    public static class EngagementStat
+    {
+        public const string GetEngagementStats = $"{ApiBase}/{{resourceType}}/{{entityId:guid}}/engagement";
+    }
+
+    public static class Ratings
+    {
+        public const string RatePodcast = $"{RatingsBase}/podcast/{{podcastId:guid}}";
+    }
+
+    public static class Comments
+    {
+        public const string GetById = $"{CommentsBase}/{{commentId:guid}}";
+        public const string List = CommentsBase;
+        public const string CommentOnEntity = $"{ApiBase}/{{resourceType}}/{{entityId:guid}}/comments";
+        public const string ListResourceComments = $"{ApiBase}/{{resourceType}}/{{entityId:guid}}/comments";
+        public const string ListCommentReplies = $"{CommentsBase}/{{parentId:guid}}/replies";
+        //public const string ReplyToComment = $"{CommentsBase}/{{parentId:guid}}/replies";
+        public const string ReplyToComment = $"{ApiBase}/{{resourceType}}/{{entityId:guid}}/comments/{{parentId:guid}}/replies";
+        public const string Delete = GetById;
+    }
+
+    public static class Reactions
+    {
+        public const string ReactOnEntity = $"{ApiBase}/reactions/{{resourceType}}/{{entityId:guid}}";
+    }
+
+    public static class Follows
+    {
+        public const string FollowEntity = $"{FollowsBase}/{{resourceType}}/{{entityId:guid}}";
     }
 }

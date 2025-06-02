@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audora.Infrastructure.Repositories;
 
-public class PodcastRepository : Repository<Podcast>, IPodcastRepository
+public class PodcastRepository : Repository<Podcast, IPodcastRepository>, IPodcastRepository
 {
     public PodcastRepository(ApplicationDbContext context) : base(context)
     {

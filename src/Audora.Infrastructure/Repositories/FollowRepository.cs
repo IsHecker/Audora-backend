@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Audora.Infrastructure.Repositories;
 
-public class FollowRepository : Repository<Follow>, IFollowRepository
+public class FollowRepository : Repository<Follow, IFollowRepository>, IFollowRepository
 {
     public FollowRepository(ApplicationDbContext context) : base(context)
     {
@@ -17,7 +17,7 @@ public class FollowRepository : Repository<Follow>, IFollowRepository
 
     public Task<IQueryable<Follow>> GetListenerFollows(Guid followerId)
     {
-        return Task.FromResult(Query.Where(x => x.FollowerId == followerId));
+        return Task.FromResult(Query.Where(x => x.ListenerId == followerId));
     }
 
     public async Task<IQueryable<Follow>> GetListenerFollowsByEntityIds(Guid followerId, IEnumerable<Guid> entityIds)
@@ -27,6 +27,6 @@ public class FollowRepository : Repository<Follow>, IFollowRepository
 
     public async Task<bool> IsListenerFollowingAsync(Guid followerId, Guid entityId)
     {
-        return await Query.FirstOrDefaultAsync(f => f.FollowerId == followerId && f.EntityId == entityId) is not null;
+        return await Query.FirstOrDefaultAsync(f => f.ListenerId == followerId && f.EntityId == entityId) is not null;
     }
 }

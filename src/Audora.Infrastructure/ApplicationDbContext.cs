@@ -1,3 +1,4 @@
+using System.Reflection;
 using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -15,20 +16,29 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
     public DbSet<PodcastRating> PodcastRatings { get; set; }
     public DbSet<PodcastStat> PodcastStats { get; set; }
     public DbSet<Reaction> Reactions { get; set; }
-    public DbSet<EngagementStat> EngagementStats { get; set; }
+    public DbSet<ReactionStat> ReactionStats { get; set; }
     public DbSet<EpisodeStat> EpisodeStats { get; set; }
     public DbSet<Playlist> Playlists { get; set; }
     public DbSet<PlaylistEpisode> PlaylistEpisodes { get; set; }
+    public DbSet<Comment> Comments { get; set; }
+    public DbSet<CommentStat> CommentStats { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Tag>().HasNoKey();
+        modelBuilder.Entity<CommentStat>().HasNoKey();
+        modelBuilder.Entity<ReactionStat>().HasNoKey();
 
-        modelBuilder.Entity<Episode>()
-            .HasMany(e => e.Playlists)
-            .WithMany(p => p.Episodes)
-            .UsingEntity<PlaylistEpisode>();
 
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        modelBuilder.Entity<CommentStat>().HasKey(cs => new { cs.EntityId, cs.EntityType });
+        modelBuilder.Entity<ReactionStat>().HasKey(rs => new { rs.EntityId, rs.EntityType, rs.ReactionType });
+
+        modelBuilder.Entity<PodcastRating>()
+            .HasOne<Podcast>()
+            .WithOne()
+            .HasForeignKey<PodcastRating>(pr => pr.PodcastId);
+            
+        
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

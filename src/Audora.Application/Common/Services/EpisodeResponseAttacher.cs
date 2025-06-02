@@ -1,6 +1,7 @@
 using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Application.Common.Mappings;
 using Audora.Contracts.Episodes.Responses;
+using Audora.Domain.Common.Enums;
 using Audora.Domain.Entities;
 
 namespace Audora.Application.Common.Services;
@@ -10,19 +11,22 @@ public class EpisodeResponseAttacher : ResponseAttacher<EpisodeResponseAttacher,
 {
     private readonly IEpisodeStatRepository _episodeStatRepository;
     private readonly IReactionRepository _reactionRepository;
-    private readonly IEngagementStatRepository _engagementStatRepository;
+    private readonly EngagementStatsService _engagementStatsService;
 
     private HashSet<Guid>? _episodeIdsCache;
-    private HashSet<Guid> EpisodeIds =>
-        _episodeIdsCache ??= ResponseCollection.Select(p => p.Id).ToHashSet();
 
-    public EpisodeResponseAttacher(IEpisodeStatRepository episodeStatRepository,
-        IReactionRepository reactionRepository, IEngagementStatRepository engagementStatRepository)
+    public EpisodeResponseAttacher(
+        IEpisodeStatRepository episodeStatRepository,
+        IReactionRepository reactionRepository,
+        EngagementStatsService engagementStatsService)
     {
         _episodeStatRepository = episodeStatRepository;
         _reactionRepository = reactionRepository;
-        _engagementStatRepository = engagementStatRepository;
+        _engagementStatsService = engagementStatsService;
     }
+
+    private HashSet<Guid> EpisodeIds =>
+          _episodeIdsCache ??= ResponseCollection.Select(p => p.Id).ToHashSet();
 
 
     public EpisodeResponseAttacher AttachEpisodeStats() =>
@@ -36,14 +40,16 @@ public class EpisodeResponseAttacher : ResponseAttacher<EpisodeResponseAttacher,
         var episodeStatDict = (await _episodeStatRepository.GetAllByEpisodeIdsAsync(EpisodeIds))
                     .ToDictionary(es => es.EpisodeId);
 
-        var engagementStatDict = (await _engagementStatRepository.GetByEntityIdsAsync(EpisodeIds))
-            .ToDictionary(es => es.EntityId);
+        var engagementStatResult = await _engagementStatsService.GetStatsAsync(EpisodeIds, EntityType.Episode);
+
+        if (engagementStatResult.IsError)
+            return;
 
 
         AddAttachment(response =>
         {
             response.EpisodeStat = episodeStatDict[response.Id]
-            .ToResponse(engagementStatDict[response.Id]);
+            .ToResponse(engagementStatResult.Value[response.Id]);
         });
     }
 
@@ -51,9 +57,12 @@ public class EpisodeResponseAttacher : ResponseAttacher<EpisodeResponseAttacher,
     {
         var episodeStat = await _episodeStatRepository.GetByEpisodeIdAsync(SingleResponse.Id);
 
-        var engagementStat = await _engagementStatRepository.GetByEntityIdAsync(SingleResponse.Id);
+        var engagementStatResult = await _engagementStatsService.GetStatsAsync(SingleResponse.Id, EntityType.Episode);
 
-        SingleResponse.EpisodeStat = episodeStat.ToResponse(engagementStat!);
+        if (engagementStatResult.IsError)
+            return;
+
+        SingleResponse.EpisodeStat = episodeStat.ToResponse(engagementStatResult.Value);
     }
 
 

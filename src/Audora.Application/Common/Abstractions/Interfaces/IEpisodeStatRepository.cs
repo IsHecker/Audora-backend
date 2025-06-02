@@ -2,7 +2,7 @@ using Audora.Domain.Entities;
 
 namespace Audora.Application.Common.Abstractions.Interfaces;
 
-public interface IEpisodeStatRepository : IRepository<EpisodeStat>
+public interface IEpisodeStatRepository : IRepository<EpisodeStat, IEpisodeStatRepository>
 {
     Task<EpisodeStat> GetByEpisodeIdAsync(Guid episodeId);
     Task<IQueryable<EpisodeStat>> GetAllByPodcastId(Guid podcastId);

@@ -1,6 +1,6 @@
 namespace Audora.Contracts.Analytics.Responses;
 
-public class PodcastAnalyticsResponse
+public class PodcastStatsResponse
 {
     public string PodcastName { get; init; } = null!;
     public float AverageRating { get; init; }

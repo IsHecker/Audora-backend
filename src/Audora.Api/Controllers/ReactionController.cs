@@ -1,5 +1,9 @@
+using Audora.Application.Common;
+using Audora.Application.Reactions.Commands.ToggleReaction;
 using Audora.Application.Reactions.Queries.GetListenerReaction;
+using Audora.Contracts.Reactions.Requests;
 using Audora.Domain.Common.Enums;
+using Audora.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +19,22 @@ public class ReactionController : ApiController
     }
 
     [HttpGet(ApiEndpoints.Listeners.GetListenerReactionForEntity)]
-    public async Task<IActionResult> GetListenerReactionForEntity(Guid listenerId, Guid entityId, [FromQuery] string entityType)
+    public async Task<IActionResult> GetListenerReactionForEntity(Guid listenerId, Guid entityId, EntityType entityType)
     {
-        if (!Enum.TryParse<EntityType>(entityType, true, out var result))
-            return Problem(detail: $"EntityType with value: '{entityType} is not found.'");
-
-        var query = new GetListenerReactionQuery(listenerId, entityId, result);
+        var query = new GetListenerReactionQuery(listenerId, entityId, entityType);
         var listenerReactionResult = await _sender.Send(query);
         return listenerReactionResult.Match(Ok, Problem);
+    }
+
+    [HttpPost(ApiEndpoints.Reactions.ReactOnEntity)]
+    public async Task<IActionResult> ReactOnEntity(Guid entityId, string resourceType, CreateReactionRequest request)
+    {
+        if (!Enum.TryParse<ReactionType>(request.ReactionType, true, out var reactionType))
+            return Problem(detail: $"ReactionType with value '{request.ReactionType}' is not found.");
+
+        var reaction = new Reaction(ListenerId, entityId, resourceType.ToEntityType(), reactionType);
+        var command = new ToggleReactionCommand(reaction);
+        var toggleReactionResult = await _sender.Send(command);
+        return toggleReactionResult.Match(Ok, Problem);
     }
 }
