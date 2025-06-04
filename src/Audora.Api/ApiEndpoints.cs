@@ -105,8 +105,8 @@ public static class ApiEndpoints
 
     public static class PlaybackSessions
     {
-        public const string ListPlaybackSessionHistory = PlaylistsBase;
-        public const string GetOrCreatePlaybackSession = $"{PlaybackSessionsBase}/episode/{{episodeId}}";
+        public const string ListPlaybackSessionHistory = PlaybackSessionsBase;
+        public const string GetOrCreatePlaybackSession = PlaybackSessionsBase;
         public const string MarkPlaybackProgress = $"{PlaybackSessionsBase}/{{sessionId}}/progress";
     }
 }

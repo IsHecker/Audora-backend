@@ -12,6 +12,29 @@ namespace Audora.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AudioFiles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AudioUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StorageProviderName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Extension = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ByteSize = table.Column<long>(type: "bigint", nullable: false),
+                    Duration = table.Column<long>(type: "bigint", nullable: false),
+                    BitrateKbps = table.Column<int>(type: "int", nullable: true),
+                    IsTranscoded = table.Column<bool>(type: "bit", nullable: false),
+                    Checksum = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AudioFiles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Comments",
                 columns: table => new
                 {
@@ -132,7 +155,7 @@ namespace Audora.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tag",
+                name: "Tags",
                 columns: table => new
                 {
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -142,7 +165,7 @@ namespace Audora.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Episode",
+                name: "Episodes",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -161,9 +184,14 @@ namespace Audora.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Episode", x => x.Id);
+                    table.PrimaryKey("PK_Episodes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Episode_Podcasts_PodcastId",
+                        name: "FK_Episodes_AudioFiles_AudioFileId",
+                        column: x => x.AudioFileId,
+                        principalTable: "AudioFiles",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Episodes_Podcasts_PodcastId",
                         column: x => x.PodcastId,
                         principalTable: "Podcasts",
                         principalColumn: "Id",
@@ -242,11 +270,16 @@ namespace Audora.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_EpisodeStats", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EpisodeStats_Episode_EpisodeId",
+                        name: "FK_EpisodeStats_Episodes_EpisodeId",
                         column: x => x.EpisodeId,
-                        principalTable: "Episode",
+                        principalTable: "Episodes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EpisodeStats_Podcasts_PodcastId",
+                        column: x => x.PodcastId,
+                        principalTable: "Podcasts",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -269,9 +302,9 @@ namespace Audora.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_PlaybackSessions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PlaybackSessions_Episode_EpisodeId",
+                        name: "FK_PlaybackSessions_Episodes_EpisodeId",
                         column: x => x.EpisodeId,
-                        principalTable: "Episode",
+                        principalTable: "Episodes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -289,9 +322,9 @@ namespace Audora.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_PlaylistEpisodes", x => new { x.EpisodeId, x.PlaylistId });
                     table.ForeignKey(
-                        name: "FK_PlaylistEpisodes_Episode_EpisodeId",
+                        name: "FK_PlaylistEpisodes_Episodes_EpisodeId",
                         column: x => x.EpisodeId,
-                        principalTable: "Episode",
+                        principalTable: "Episodes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -303,8 +336,14 @@ namespace Audora.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Episode_PodcastId",
-                table: "Episode",
+                name: "IX_Episodes_AudioFileId",
+                table: "Episodes",
+                column: "AudioFileId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Episodes_PodcastId",
+                table: "Episodes",
                 column: "PodcastId");
 
             migrationBuilder.CreateIndex(
@@ -313,10 +352,20 @@ namespace Audora.Infrastructure.Migrations
                 column: "EpisodeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EpisodeStats_PodcastId",
+                table: "EpisodeStats",
+                column: "PodcastId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PlaybackSessions_EpisodeId",
                 table: "PlaybackSessions",
                 column: "EpisodeId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlaybackSessions_EpisodeId_ListenerId_LastPlayedAt",
+                table: "PlaybackSessions",
+                columns: new[] { "EpisodeId", "ListenerId", "LastPlayedAt" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_PlaylistEpisodes_PlaylistId",
@@ -369,13 +418,16 @@ namespace Audora.Infrastructure.Migrations
                 name: "ReactionStats");
 
             migrationBuilder.DropTable(
-                name: "Tag");
+                name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "Episode");
+                name: "Episodes");
 
             migrationBuilder.DropTable(
                 name: "Playlists");
+
+            migrationBuilder.DropTable(
+                name: "AudioFiles");
 
             migrationBuilder.DropTable(
                 name: "Podcasts");

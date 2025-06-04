@@ -12,6 +12,7 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
     }
 
     public DbSet<Podcast> Podcasts { get; set; }
+    public DbSet<Episode> Episodes { get; set; }
     public DbSet<Follow> Follows { get; set; }
     public DbSet<PodcastRating> PodcastRatings { get; set; }
     public DbSet<PodcastStat> PodcastStats { get; set; }
@@ -23,6 +24,8 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
     public DbSet<Comment> Comments { get; set; }
     public DbSet<CommentStat> CommentStats { get; set; }
     public DbSet<PlaybackSession> PlaybackSessions { get; set; }
+    public DbSet<AudioFile> AudioFiles { get; set; }
+    public DbSet<Tag> Tags { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

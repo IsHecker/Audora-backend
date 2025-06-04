@@ -5,7 +5,7 @@ using Audora.Application.Common.Results;
 using Audora.Contracts.PlaybackSessions.Responses;
 using Audora.Domain.Entities;
 
-namespace Audora.Application.PlaybackSessions.Queries.GetOrCreatePlaybackSession;
+namespace Audora.Application.PlaybackSessions.Commands.GetOrCreatePlaybackSession;
 
 public record GetOrCreatePlaybackSessionCommand(Guid ListenerId, Guid EpisodeId) : ICommand<PlaybackSessionResponse>;
 
@@ -56,17 +56,19 @@ public class GetOrCreatePlaybackSessionCommandHandler : ICommandHandler<GetOrCre
         }
 
 
+        var isFirstTimeListening = true;
         var newSession = new PlaybackSession(request.ListenerId, request.EpisodeId);
 
         if (oldSession is not null)
         {
             newSession.MarkProgress(oldSession.PlaybackPosition, 0, EpisodeDuration);
-            podcastStat.CalculateRetentionRate(oldSession.LastPlayedAt);
+            isFirstTimeListening = false;
 
-            return newSession.ToResponse();
+            podcastStat.CalculateRetentionRate(oldSession.LastPlayedAt);
         }
 
-        await IncreasePlayCount(request.EpisodeId, podcastStat);
+        if (isFirstTimeListening)
+            await IncreasePlayCount(request.EpisodeId, podcastStat);
 
         await _playbackSessionRepository.AddAsync(newSession);
         return newSession.ToResponse();
@@ -75,6 +77,7 @@ public class GetOrCreatePlaybackSessionCommandHandler : ICommandHandler<GetOrCre
     private async Task IncreasePlayCount(Guid episodeId, PodcastStat podcastStat)
     {
         var episodeStat = await _episodeStatRepository.AsTracking().GetByEpisodeIdAsync(episodeId);
+
         episodeStat.IncreasePlayCount();
         podcastStat.IncreaseTotalPlays();
     }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Audora.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250603180615_init")]
+    [Migration("20250604135417_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -24,6 +24,57 @@ namespace Audora.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Audora.Domain.Entities.AudioFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AudioUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("BitrateKbps")
+                        .HasColumnType("int");
+
+                    b.Property<long>("ByteSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Checksum")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("Duration")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Extension")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsTranscoded")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StorageProviderName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AudioFiles");
+                });
 
             modelBuilder.Entity("Audora.Domain.Entities.Comment", b =>
                 {
@@ -121,9 +172,12 @@ namespace Audora.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AudioFileId")
+                        .IsUnique();
+
                     b.HasIndex("PodcastId");
 
-                    b.ToTable("Episode");
+                    b.ToTable("Episodes");
                 });
 
             modelBuilder.Entity("Audora.Domain.Entities.EpisodeStat", b =>
@@ -169,6 +223,8 @@ namespace Audora.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EpisodeId");
+
+                    b.HasIndex("PodcastId");
 
                     b.ToTable("EpisodeStats");
                 });
@@ -242,6 +298,8 @@ namespace Audora.Infrastructure.Migrations
 
                     b.HasIndex("EpisodeId")
                         .IsUnique();
+
+                    b.HasIndex("EpisodeId", "ListenerId", "LastPlayedAt");
 
                     b.ToTable("PlaybackSessions");
                 });
@@ -485,16 +543,24 @@ namespace Audora.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("Audora.Domain.Entities.Episode", b =>
                 {
+                    b.HasOne("Audora.Domain.Entities.AudioFile", "AudioFile")
+                        .WithOne()
+                        .HasForeignKey("Audora.Domain.Entities.Episode", "AudioFileId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Audora.Domain.Entities.Podcast", null)
                         .WithMany("Episodes")
                         .HasForeignKey("PodcastId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AudioFile");
                 });
 
             modelBuilder.Entity("Audora.Domain.Entities.EpisodeStat", b =>
@@ -503,6 +569,12 @@ namespace Audora.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("EpisodeId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Audora.Domain.Entities.Podcast", null)
+                        .WithMany()
+                        .HasForeignKey("PodcastId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Episode");

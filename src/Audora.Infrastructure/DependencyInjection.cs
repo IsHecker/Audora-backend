@@ -29,6 +29,7 @@ public static class DependencyInjection
         services.AddScoped<IPodcastRepository, PodcastRepository>();
         services.AddScoped<IPodcastStatRepository, PodcastStatRepository>();
         services.AddScoped<IPlaylistRepository, PlaylistRepository>();
+        services.AddScoped<IAudioFileRepository, AudioFileRepository>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
 

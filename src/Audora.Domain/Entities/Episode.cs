@@ -54,5 +54,10 @@ public class Episode : Entity
         IsPublished = updatedEpisode.IsPublished;
     }
 
+    public void AttachAudioFile(AudioFile audioFile)
+    {
+        Duration = audioFile.Duration;
+    }
+
     public void SetPodcastName(string podcastName) => PodcastName = podcastName;
 }

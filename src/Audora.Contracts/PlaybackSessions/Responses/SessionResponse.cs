@@ -1,9 +1,12 @@
+using Audora.Contracts.Episodes.Responses;
+
 namespace Audora.Contracts.PlaybackSessions.Responses;
 
 public class PlaybackSessionResponse
 {
     public Guid Id { get; init; }
     public Guid EpisodeId { get; init; }
+    public SmallEpisodeResponse? Episode { get; set; } = null!;
     public int PlaybackPosition { get; init; }
     public int TotalListenedDuration { get; init; }
     public DateTime StartedAt { get; init; }

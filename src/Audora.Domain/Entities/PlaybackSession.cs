@@ -4,7 +4,7 @@ namespace Audora.Domain.Entities;
 
 public class PlaybackSession : Entity
 {
-    private const double CompletionThreshold = 0.95; // 95% listened to mark as completed
+    private const float CompletionThreshold = 0.95f; // 95% listened to mark as completed
 
     public Guid ListenerId { get; init; }
     public Guid EpisodeId { get; init; }
@@ -16,7 +16,6 @@ public class PlaybackSession : Entity
     public bool IsCompleted { get; private set; }
 
     public bool IsSessionExpired => LastPlayedAt.Date < DateTime.UtcNow.Date;
-    public bool IsFirstTimeListening => LastPlayedAt == StartedAt;
 
     public PlaybackSession(Guid listenerId, Guid episodeId)
     {
@@ -33,15 +32,14 @@ public class PlaybackSession : Entity
     public void MarkProgress(int playbackPosition, int listenedDuration, long episodeDuration)
     {
         // TODO Result pattern Errors instead of exceptions.
-        if (playbackPosition < 0)
+        if (playbackPosition < 0 || playbackPosition > MathF.Floor(episodeDuration / 1000f))
             throw new ArgumentOutOfRangeException(nameof(playbackPosition));
 
         if (listenedDuration < 0)
             throw new ArgumentOutOfRangeException(nameof(listenedDuration));
 
-        // Don't allow rollback
-        if (listenedDuration < TotalListenedDuration)
-            throw new InvalidOperationException("Listened duration cannot decrease.");
+        if (listenedDuration < 0)
+            throw new InvalidOperationException("Listened duration cannot be less than 0.");
 
         PlaybackPosition = playbackPosition;
         TotalListenedDuration += listenedDuration;
@@ -59,5 +57,5 @@ public class PlaybackSession : Entity
     }
 
     private bool HasReachedCompletionThreshold(long episodeDurationMs) =>
-        PlaybackPosition >= episodeDurationMs / 1000.0 * CompletionThreshold;
+        PlaybackPosition >= MathF.Round(episodeDurationMs / 1000f * CompletionThreshold);
 }

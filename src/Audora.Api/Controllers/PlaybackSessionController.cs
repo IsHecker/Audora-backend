@@ -1,6 +1,6 @@
 using Audora.Application.Common.Models;
+using Audora.Application.PlaybackSessions.Commands.GetOrCreatePlaybackSession;
 using Audora.Application.PlaybackSessions.Commands.MarkPlaybackSessionProgress;
-using Audora.Application.PlaybackSessions.Queries.GetOrCreatePlaybackSession;
 using Audora.Application.PlaybackSessions.Queries.ListPlaybackHistory;
 using Audora.Contracts.PlaybackSessions.Requests;
 using MediatR;
@@ -26,7 +26,7 @@ public class PlaybackSessionController : ApiController
         return listResult.Match(Ok, Problem);
     }
 
-    [HttpGet(ApiEndpoints.PlaybackSessions.GetOrCreatePlaybackSession)]
+    [HttpPost(ApiEndpoints.PlaybackSessions.GetOrCreatePlaybackSession)]
     public async Task<IActionResult> GetOrCreatePlaybackSession(Guid episodeId)
     {
         var query = new GetOrCreatePlaybackSessionCommand(ListenerId, episodeId);

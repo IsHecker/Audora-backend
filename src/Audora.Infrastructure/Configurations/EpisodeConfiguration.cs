@@ -11,5 +11,11 @@ public class EpisodeConfiguration : IEntityTypeConfiguration<Episode>
         builder.HasMany(e => e.Playlists)
             .WithMany(p => p.Episodes)
             .UsingEntity<PlaylistEpisode>();
+
+
+        builder.HasOne(ep => ep.AudioFile)
+            .WithOne()
+            .HasForeignKey<Episode>(es => es.AudioFileId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }
