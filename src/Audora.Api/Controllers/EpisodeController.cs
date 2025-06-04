@@ -1,3 +1,4 @@
+using System.Net;
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
 using Audora.Application.Episodes.Commands.CreateEpisode;
@@ -56,16 +57,12 @@ public class EpisodeController : ApiController
 
 
     [HttpPost(ApiEndpoints.Podcasts.CreateEpisode)]
-    public async Task<IActionResult> CreateEpisodeForPodcast(Guid podcastId, CreateEpisodeRequest request)
+    public async Task<IActionResult> CreateEpisodeForPodcast(Guid podcastId, CreateEpisodesRequest request)
     {
         var command = new CreateEpisodeCommand(podcastId, request.ToDomain());
         var createEpisodeResult = await _sender.Send(command);
         return createEpisodeResult.Match(
-            episode => CreatedAtAction(
-                nameof(GetEpisodeById),
-                new { episodeId = episode.Id },
-                episode.ToResponse()
-            ),
+            episodeIds => Created(string.Empty, episodeIds),
             Problem
         );
     }

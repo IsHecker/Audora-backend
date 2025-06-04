@@ -10,7 +10,7 @@ public class AudioFile : Entity
     public string Extension { get; init; } = null!;
     public string ContentType { get; init; } = null!;
     public long ByteSize { get; init; }
-    public int Duration { get; init; }
+    public long Duration { get; init; }
     public int? BitrateKbps { get; init; }
     public bool IsTranscoded { get; init; }
     public string? Checksum { get; init; }
@@ -21,7 +21,7 @@ public class AudioFile : Entity
         string extension,
         string contentType,
         long byteSize,
-        int duration,
+        long duration,
         bool isTranscoded,
         string? storageProviderName = null,
         int? bitrateKbps = null,

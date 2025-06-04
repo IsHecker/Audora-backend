@@ -12,6 +12,7 @@ public static class ApiEndpoints
     private const string RatingsBase = $"{ApiBase}/ratings";
     private const string CommentsBase = $"{ApiBase}/comments";
     private const string FollowsBase = $"{ApiBase}/follows";
+    private const string PlaybackSessionsBase = $"{ApiBase}/playback-sessions";
 
     public static class Podcasts
     {
@@ -87,7 +88,6 @@ public static class ApiEndpoints
         public const string CommentOnEntity = $"{ApiBase}/{{resourceType}}/{{entityId:guid}}/comments";
         public const string ListResourceComments = $"{ApiBase}/{{resourceType}}/{{entityId:guid}}/comments";
         public const string ListCommentReplies = $"{CommentsBase}/{{parentId:guid}}/replies";
-        //public const string ReplyToComment = $"{CommentsBase}/{{parentId:guid}}/replies";
         public const string ReplyToComment = $"{ApiBase}/{{resourceType}}/{{entityId:guid}}/comments/{{parentId:guid}}/replies";
         public const string Delete = GetById;
     }
@@ -101,5 +101,12 @@ public static class ApiEndpoints
     public static class Follows
     {
         public const string FollowEntity = $"{FollowsBase}/{{resourceType}}/{{entityId:guid}}";
+    }
+
+    public static class PlaybackSessions
+    {
+        public const string ListPlaybackSessionHistory = PlaylistsBase;
+        public const string GetOrCreatePlaybackSession = $"{PlaybackSessionsBase}/episode/{{episodeId}}";
+        public const string MarkPlaybackProgress = $"{PlaybackSessionsBase}/{{sessionId}}/progress";
     }
 }

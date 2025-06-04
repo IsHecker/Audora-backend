@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Audora.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250601224304_updateRelationshipsandnamings")]
-    partial class updateRelationshipsandnamings
+    [Migration("20250603214213_relationship")]
+    partial class relationship
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -170,6 +170,8 @@ namespace Audora.Infrastructure.Migrations
 
                     b.HasIndex("EpisodeId");
 
+                    b.HasIndex("PodcastId");
+
                     b.ToTable("EpisodeStats");
                 });
 
@@ -200,6 +202,50 @@ namespace Audora.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Follows");
+                });
+
+            modelBuilder.Entity("Audora.Domain.Entities.PlaybackSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EpisodeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("FinishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastPlayedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ListenerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("PlaybackPosition")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TotalListenedDuration")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EpisodeId")
+                        .IsUnique();
+
+                    b.ToTable("PlaybackSessions");
                 });
 
             modelBuilder.Entity("Audora.Domain.Entities.Playlist", b =>
@@ -461,7 +507,22 @@ namespace Audora.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Audora.Domain.Entities.Podcast", null)
+                        .WithMany()
+                        .HasForeignKey("PodcastId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Episode");
+                });
+
+            modelBuilder.Entity("Audora.Domain.Entities.PlaybackSession", b =>
+                {
+                    b.HasOne("Audora.Domain.Entities.Episode", null)
+                        .WithOne()
+                        .HasForeignKey("Audora.Domain.Entities.PlaybackSession", "EpisodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Audora.Domain.Entities.PlaylistEpisode", b =>

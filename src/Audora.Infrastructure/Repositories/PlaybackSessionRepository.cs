@@ -10,8 +10,15 @@ public class PlaybackSessionRepository : Repository<PlaybackSession, IPlaybackSe
     {
     }
 
+    public async Task<IQueryable<PlaybackSession>> GetAllByListenerId(Guid listenerId)
+    {
+        return (await base.GetAllAsync()).Where(ps => ps.ListenerId == listenerId);
+    }
+
     public async Task<PlaybackSession?> GetAsync(Guid listenerId, Guid episodeId)
     {
-        return await Query.FirstOrDefaultAsync(ps => ps.ListenerId == listenerId && ps.EpisodeId == episodeId);
+        return await Query.Where(ps => ps.EpisodeId == episodeId && ps.ListenerId == listenerId)
+                        .OrderByDescending(p => p.LastPlayedAt)
+                        .FirstOrDefaultAsync();
     }
 }

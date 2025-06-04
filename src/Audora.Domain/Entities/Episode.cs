@@ -5,7 +5,7 @@ namespace Audora.Domain.Entities;
 public class Episode : Entity
 {
     public Guid PodcastId { get; init; }
-    public string PodcastName { get; init; } = null!;
+    public string PodcastName { get; private set; } = null!;
     public string Name { get; private set; } = null!;
     public string Description { get; private set; } = null!;
     public string? CoverImageUrl { get; private set; }
@@ -15,6 +15,8 @@ public class Episode : Entity
     public int EpisodeNumber { get; init; }
     public DateTime ReleaseDate { get; init; } // The date when it's published
     public string Slug => Name.ToLower().Replace(' ', '-');
+
+    public AudioFile AudioFile { get; init; } = null!;
 
     public ICollection<Playlist> Playlists { get; init; } = null!;
 
@@ -51,4 +53,6 @@ public class Episode : Entity
         Duration = updatedEpisode.Duration;
         IsPublished = updatedEpisode.IsPublished;
     }
+
+    public void SetPodcastName(string podcastName) => PodcastName = podcastName;
 }

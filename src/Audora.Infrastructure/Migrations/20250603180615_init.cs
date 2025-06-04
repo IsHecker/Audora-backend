@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Audora.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,8 +17,8 @@ namespace Audora.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ListenerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     EntityType = table.Column<int>(type: "int", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -30,21 +30,16 @@ namespace Audora.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EngagementStats",
+                name: "CommentStats",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EntityType = table.Column<int>(type: "int", nullable: false),
-                    Likes = table.Column<int>(type: "int", nullable: false),
-                    Dislikes = table.Column<int>(type: "int", nullable: false),
-                    Comments = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    CommentCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EngagementStats", x => x.Id);
+                    table.PrimaryKey("PK_CommentStats", x => new { x.EntityId, x.EntityType });
                 });
 
             migrationBuilder.CreateTable(
@@ -52,9 +47,9 @@ namespace Audora.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FollowerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ListenerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FollowTarget = table.Column<byte>(type: "tinyint", nullable: false),
+                    EntityType = table.Column<int>(type: "int", nullable: false),
                     FollowedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -80,23 +75,6 @@ namespace Audora.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Playlists", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PodcastRatings",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PodcastId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ListenerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Rating = table.Column<byte>(type: "tinyint", nullable: false),
-                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PodcastRatings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -127,9 +105,9 @@ namespace Audora.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ListenerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EntityType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ListenerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EntityType = table.Column<int>(type: "int", nullable: false),
                     ReactionType = table.Column<byte>(type: "tinyint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -137,6 +115,20 @@ namespace Audora.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Reactions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReactionStats",
+                columns: table => new
+                {
+                    EntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EntityType = table.Column<int>(type: "int", nullable: false),
+                    ReactionType = table.Column<byte>(type: "tinyint", nullable: false),
+                    Count = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReactionStats", x => new { x.EntityId, x.EntityType, x.ReactionType });
                 });
 
             migrationBuilder.CreateTable(
@@ -179,11 +171,35 @@ namespace Audora.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PodcastRatings",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PodcastId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ListenerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Rating = table.Column<byte>(type: "tinyint", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PodcastRatings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PodcastRatings_Podcasts_PodcastId",
+                        column: x => x.PodcastId,
+                        principalTable: "Podcasts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PodcastStats",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PodcastId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PodcastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AverageRating = table.Column<float>(type: "real", nullable: false),
                     TotalRatings = table.Column<int>(type: "int", nullable: false),
                     TotalPlays = table.Column<long>(type: "bigint", nullable: false),
@@ -234,6 +250,33 @@ namespace Audora.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PlaybackSessions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ListenerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EpisodeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PlaybackPosition = table.Column<int>(type: "int", nullable: false),
+                    TotalListenedDuration = table.Column<int>(type: "int", nullable: false),
+                    StartedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastPlayedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FinishedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlaybackSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlaybackSessions_Episode_EpisodeId",
+                        column: x => x.EpisodeId,
+                        principalTable: "Episode",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PlaylistEpisodes",
                 columns: table => new
                 {
@@ -270,9 +313,21 @@ namespace Audora.Infrastructure.Migrations
                 column: "EpisodeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PlaybackSessions_EpisodeId",
+                table: "PlaybackSessions",
+                column: "EpisodeId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PlaylistEpisodes_PlaylistId",
                 table: "PlaylistEpisodes",
                 column: "PlaylistId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PodcastRatings_PodcastId",
+                table: "PodcastRatings",
+                column: "PodcastId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PodcastStats_PodcastId",
@@ -287,13 +342,16 @@ namespace Audora.Infrastructure.Migrations
                 name: "Comments");
 
             migrationBuilder.DropTable(
-                name: "EngagementStats");
+                name: "CommentStats");
 
             migrationBuilder.DropTable(
                 name: "EpisodeStats");
 
             migrationBuilder.DropTable(
                 name: "Follows");
+
+            migrationBuilder.DropTable(
+                name: "PlaybackSessions");
 
             migrationBuilder.DropTable(
                 name: "PlaylistEpisodes");
@@ -306,6 +364,9 @@ namespace Audora.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reactions");
+
+            migrationBuilder.DropTable(
+                name: "ReactionStats");
 
             migrationBuilder.DropTable(
                 name: "Tag");

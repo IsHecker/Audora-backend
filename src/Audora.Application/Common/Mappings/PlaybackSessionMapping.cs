@@ -5,16 +5,23 @@ namespace Audora.Application.Common.Mappings;
 
 public static class PlaybackSessionMapping
 {
-    public static CreateSessionResponse ToResponse(this PlaybackSession session)
+    public static PlaybackSessionResponse ToResponse(this PlaybackSession session)
     {
-        return new CreateSessionResponse
+        return new PlaybackSessionResponse
         {
+            Id = session.Id,
+            EpisodeId = session.EpisodeId,
             PlaybackPosition = session.PlaybackPosition,
             FinishedAt = session.FinishedAt,
             StartedAt = session.StartedAt,
             IsCompleted = session.IsCompleted,
             LastPlayedAt = session.LastPlayedAt,
-            ListenedDuration = session.ListenedDuration
+            TotalListenedDuration = session.TotalListenedDuration
         };
+    }
+
+    public static IEnumerable<PlaybackSessionResponse> ToResponse(this IEnumerable<PlaybackSession> sessions)
+    {
+        return sessions.Select(ToResponse);
     }
 }

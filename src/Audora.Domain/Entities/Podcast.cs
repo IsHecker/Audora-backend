@@ -20,7 +20,7 @@ public class Podcast : Entity
 
     public string Slug => Name.ToLower().Replace(' ', '-');
 
-    public ICollection<Episode>? Episodes { get; } = [];
+    public List<Episode>? Episodes { get; } = [];
 
     [NotMapped]
     public ICollection<Tag> Tags { get; private set; } = [];
@@ -57,7 +57,7 @@ public class Podcast : Entity
 
     public void Publish()
     {
-        if (Episodes.Count < 1)
+        if (TotalEpisodes < 1)
         {
             // TODO return error.
             return;
@@ -84,10 +84,14 @@ public class Podcast : Entity
         Tags = tags.Select(tag => new Tag(tag)).ToList();
     }
 
-    public void AddEpisode(Episode episode)
+    public void AddEpisodes(List<Episode> episodes)
     {
-        Episodes?.Add(episode);
-        TotalEpisodes++;
+        foreach (var episode in episodes)
+        {
+            Episodes?.Add(episode);
+            episode.SetPodcastName(Name);
+            TotalEpisodes++;
+        }
     }
 
     public void ChangeRating(float newAverageRating, int newTotalRatings)

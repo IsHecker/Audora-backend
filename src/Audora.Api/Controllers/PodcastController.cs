@@ -1,6 +1,5 @@
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
-using Audora.Application.Follows.Queries.ListPodcastFollowers;
 using Audora.Application.Podcasts.Commands.CreatePodcast;
 using Audora.Application.Podcasts.Commands.DeletePodcast;
 using Audora.Application.Podcasts.Commands.UpdatePodcast;
@@ -68,7 +67,7 @@ public class PodcastController : ApiController
     [HttpPost(ApiEndpoints.Podcasts.Create)]
     public async Task<IActionResult> CreatePodcast(CreatePodcastRequest request)
     {
-        var command = new CreatePodcastCommand(request.ToDomain(), request.Episodes?.ToDomain());
+        var command = new CreatePodcastCommand(request.ToDomain());
         var createResult = await _sender.Send(command);
         return createResult.Match(
             response => CreatedAtAction(

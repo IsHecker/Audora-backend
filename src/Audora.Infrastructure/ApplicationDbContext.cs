@@ -22,6 +22,7 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
     public DbSet<PlaylistEpisode> PlaylistEpisodes { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<CommentStat> CommentStats { get; set; }
+    public DbSet<PlaybackSession> PlaybackSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -37,8 +38,24 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
             .HasOne<Podcast>()
             .WithOne()
             .HasForeignKey<PodcastRating>(pr => pr.PodcastId);
-            
-        
+
+        modelBuilder.Entity<PlaybackSession>()
+            .HasOne<Episode>()
+            .WithOne()
+            .HasForeignKey<PlaybackSession>(ps => ps.EpisodeId);
+
+
+        modelBuilder.Entity<EpisodeStat>()
+            .HasOne<Podcast>()
+            .WithMany()
+            .HasForeignKey(es => es.PodcastId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<PlaybackSession>()
+            .HasIndex(p => new { p.EpisodeId, p.ListenerId, p.LastPlayedAt });
+
+
+
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

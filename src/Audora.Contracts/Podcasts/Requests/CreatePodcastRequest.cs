@@ -13,5 +13,4 @@ public class CreatePodcastRequest
     public string Category { get; init; } = null!;
     public string Language { get; init; } = null!;
     public string[]? Tags { get; init; } = null!;
-    public CreateEpisodeRequest[]? Episodes { get; init; } = null!;
 }

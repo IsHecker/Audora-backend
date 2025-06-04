@@ -1,0 +1,44 @@
+using Audora.Application.Common.Models;
+using Audora.Application.PlaybackSessions.Commands.MarkPlaybackSessionProgress;
+using Audora.Application.PlaybackSessions.Queries.GetOrCreatePlaybackSession;
+using Audora.Application.PlaybackSessions.Queries.ListPlaybackHistory;
+using Audora.Contracts.PlaybackSessions.Requests;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Audora.Api.Controllers;
+
+public class PlaybackSessionController : ApiController
+{
+    private readonly ISender _sender;
+
+    public PlaybackSessionController(ISender sender)
+    {
+        _sender = sender;
+    }
+
+
+    [HttpGet(ApiEndpoints.PlaybackSessions.ListPlaybackSessionHistory)]
+    public async Task<IActionResult> ListPlaybackSessionHistory([FromQuery] Pagination pagination)
+    {
+        var query = new ListPlaybackHistoryQuery(ListenerId, pagination);
+        var listResult = await _sender.Send(query);
+        return listResult.Match(Ok, Problem);
+    }
+
+    [HttpGet(ApiEndpoints.PlaybackSessions.GetOrCreatePlaybackSession)]
+    public async Task<IActionResult> GetOrCreatePlaybackSession(Guid episodeId)
+    {
+        var query = new GetOrCreatePlaybackSessionCommand(ListenerId, episodeId);
+        var getOrCreateResult = await _sender.Send(query);
+        return getOrCreateResult.Match(Ok, Problem);
+    }
+
+    [HttpPatch(ApiEndpoints.PlaybackSessions.MarkPlaybackProgress)]
+    public async Task<IActionResult> MarkPlaybackProgress(Guid sessionId, MarkSessionProgressRequest request)
+    {
+        var command = new MarkPlaybackSessionProgressCommand(sessionId, request);
+        var markSessionResult = await _sender.Send(command);
+        return markSessionResult.Match(NoContent, Problem);
+    }
+}

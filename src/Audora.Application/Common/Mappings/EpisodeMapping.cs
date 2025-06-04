@@ -7,18 +7,23 @@ namespace Audora.Application.Common.Mappings;
 
 public static class EpisodeMapping
 {
-    public static Episode ToDomain(this CreateEpisodeRequest request)
+    public static Episode ToDomain(this EpisodeDetails request)
     {
         return new Episode(
-            podcastId: request.PodcastId,
+            podcastId: Guid.Empty,
             audioFileId: request.AudioFileId,
             name: request.Name,
             description: request.Description,
             coverImageUrl: request.CoverImageUrl,
             isPublished: request.IsPublished,
-            podcastName: request.PodcastName,
+            podcastName: string.Empty,
             episodeNumber: request.EpisodeNumber
         );
+    }
+
+    public static IEnumerable<Episode> ToDomain(this CreateEpisodesRequest request)
+    {
+        return request.Episodes.Select(ToDomain);
     }
 
     public static Episode ToDomain(this UpdateEpisodeRequest request)
@@ -33,11 +38,6 @@ public static class EpisodeMapping
             podcastName: string.Empty,
             episodeNumber: 0
         );
-    }
-
-    public static IEnumerable<Episode> ToDomain(this IEnumerable<CreateEpisodeRequest> request)
-    {
-        return request.Select(ToDomain);
     }
 
     public static EpisodeResponse ToSimpleResponse(this Episode episode)

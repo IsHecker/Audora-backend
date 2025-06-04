@@ -5,9 +5,9 @@ using Audora.Domain.Entities;
 
 namespace Audora.Application.Episodes.Commands.CreateEpisode;
 
-public record CreateEpisodeCommand(Guid PodcastId, Episode Episode) : ICommand<Episode>;
+public record CreateEpisodeCommand(Guid PodcastId, IEnumerable<Episode> Episodes) : ICommand<IEnumerable<Guid>>;
 
-public class CreateEpisodeCommandHandler : ICommandHandler<CreateEpisodeCommand, Episode>
+public class CreateEpisodeCommandHandler : ICommandHandler<CreateEpisodeCommand, IEnumerable<Guid>>
 {
     private readonly IPodcastRepository _podcastRepository;
     private readonly IEpisodeStatRepository _episodeStatRepository;
@@ -23,9 +23,9 @@ public class CreateEpisodeCommandHandler : ICommandHandler<CreateEpisodeCommand,
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<Episode>> Handle(CreateEpisodeCommand request, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<Guid>>> Handle(CreateEpisodeCommand request, CancellationToken cancellationToken)
     {
-        var episode = request.Episode;
+        var episodes = request.Episodes.ToList();
 
         var podcast = await _podcastRepository.AsTracking().GetByIdAsync(request.PodcastId);
 
@@ -34,14 +34,17 @@ public class CreateEpisodeCommandHandler : ICommandHandler<CreateEpisodeCommand,
             return Error.NotFound(description: $"Podcast with Id '{request.PodcastId}' is not found.");
         }
 
-        podcast.AddEpisode(episode);
+        podcast.AddEpisodes(episodes);
 
         // to access episode id.
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        var episodeStat = new EpisodeStat(episode.Id, podcast.Id, episode.Name);
-        await _episodeStatRepository.AddAsync(episodeStat);
+        foreach (var episode in episodes)
+        {
+            var episodeStat = new EpisodeStat(episode.Id, podcast.Id, episode.Name);
+            await _episodeStatRepository.AddAsync(episodeStat);
+        }
 
-        return request.Episode;
+        return episodes.Select(ep => ep.Id).ToResult();
     }
 }
