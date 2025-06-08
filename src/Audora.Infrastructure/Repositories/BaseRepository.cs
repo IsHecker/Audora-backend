@@ -39,4 +39,10 @@ public abstract class BaseRepository<TDomain, TRepository>
         Query = Query.AsTracking();
         return (TRepository)(IBaseRepository<TDomain, TRepository>)this;
     }
+
+    public async Task<IEnumerable<TDomain>> AddAsync(IEnumerable<TDomain> entities)
+    {
+        await Context.AddRangeAsync(entities);
+        return entities;
+    }
 }

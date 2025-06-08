@@ -33,4 +33,14 @@ public abstract class Repository<TEntity, TRepository>
     {
         return await Query.AnyAsync(entity => entity.Id == id);
     }
+
+    public async Task<bool> DeleteAsync(IEnumerable<Guid> entityIds)
+    {
+        return await Query.Where(e => entityIds.Contains(e.Id)).ExecuteDeleteAsync() > 0;
+    }
+
+    public async Task<bool> DeleteAsync(IEnumerable<TEntity> entities)
+    {
+        return await DeleteAsync(entities.Select(e => e.Id));
+    }
 }

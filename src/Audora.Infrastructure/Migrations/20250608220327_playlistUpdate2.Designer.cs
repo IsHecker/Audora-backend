@@ -4,6 +4,7 @@ using Audora.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Audora.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250608220327_playlistUpdate2")]
+    partial class playlistUpdate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -349,9 +352,14 @@ namespace Audora.Infrastructure.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("PlaylistId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("PlaylistId", "EpisodeId");
 
                     b.HasIndex("EpisodeId");
+
+                    b.HasIndex("PlaylistId1");
 
                     b.ToTable("PlaylistEpisodes");
                 });
@@ -588,21 +596,21 @@ namespace Audora.Infrastructure.Migrations
 
             modelBuilder.Entity("Audora.Domain.Entities.PlaylistEpisode", b =>
                 {
-                    b.HasOne("Audora.Domain.Entities.Episode", "Episode")
+                    b.HasOne("Audora.Domain.Entities.Episode", null)
                         .WithMany()
                         .HasForeignKey("EpisodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Audora.Domain.Entities.Playlist", "Playlist")
-                        .WithMany("PlaylistEpisodes")
+                    b.HasOne("Audora.Domain.Entities.Playlist", null)
+                        .WithMany()
                         .HasForeignKey("PlaylistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Episode");
-
-                    b.Navigation("Playlist");
+                    b.HasOne("Audora.Domain.Entities.Playlist", null)
+                        .WithMany("PlaylistEpisodes")
+                        .HasForeignKey("PlaylistId1");
                 });
 
             modelBuilder.Entity("Audora.Domain.Entities.PodcastRating", b =>

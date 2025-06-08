@@ -6,7 +6,7 @@ using Audora.Application.Common.Models;
 using Audora.Application.Common.Results;
 using Audora.Contracts.Episodes.Responses;
 using Audora.Contracts.Podcasts.Responses;
-using Audora.Contracts.Search;
+using Audora.Contracts.Search.Responses;
 using Audora.Domain.Entities;
 
 namespace Audora.Application.Search;

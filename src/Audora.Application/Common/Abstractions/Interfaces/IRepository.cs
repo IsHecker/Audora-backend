@@ -7,5 +7,7 @@ public interface IRepository<TEntity, TRepository>
     Task<TEntity?> GetByIdAsync(Guid id);
     Task<bool> DeleteAsync(Guid id);
     Task<bool> DeleteAsync(TEntity entity);
+    Task<bool> DeleteAsync(IEnumerable<Guid> entityIds);
+    Task<bool> DeleteAsync(IEnumerable<TEntity> entities);
     Task<bool> ExistsAsync(Guid id);
 }

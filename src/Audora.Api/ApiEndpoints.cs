@@ -49,6 +49,11 @@ public static class ApiEndpoints
     {
         public const string GetById = $"{PlaylistsBase}/{{playlistId:guid}}";
         public const string ListPlaylistEpisodes = $"{GetById}/episodes";
+        public const string ListMyPlaylists = $"{PlaylistsBase}/me";
+
+        public const string UpdatePlaylistEpisodes = $"{GetById}/episodes";
+        public const string Create = PlaylistsBase;
+        public const string Delete = GetById;
     }
 
     public static class Creators
@@ -62,6 +67,7 @@ public static class ApiEndpoints
         public const string GetById = $"{ListenersBase}/{{listenerId:guid}}";
         public const string ListFollowedPodcasts = $"{GetById}/followed-podcasts";
         public const string ListListenerReactions = $"{GetById}/reactions";
+        public const string ListPlaylistsByListener = $"{ListenersBase}/{{listenerId}}/playlists";
         public const string GetListenerReactionForEntity = $"{GetById}/reactions/{{entityId:guid}}";
     }
 

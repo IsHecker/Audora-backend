@@ -3,7 +3,7 @@ using Audora.Contracts.Common;
 using Audora.Contracts.Episodes.Responses;
 using Audora.Contracts.Podcasts.Responses;
 
-namespace Audora.Contracts.Search;
+namespace Audora.Contracts.Search.Responses;
 
 public class SearchResponse
 {

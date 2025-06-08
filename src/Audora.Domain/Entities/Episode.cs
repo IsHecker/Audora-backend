@@ -18,8 +18,6 @@ public class Episode : Entity
 
     public AudioFile AudioFile { get; init; } = null!;
 
-    public ICollection<Playlist> Playlists { get; init; } = null!;
-
     public Episode(
         string name,
         Guid podcastId,

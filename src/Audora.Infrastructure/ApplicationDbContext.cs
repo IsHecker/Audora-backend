@@ -57,8 +57,6 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<PlaybackSession>()
             .HasIndex(p => new { p.EpisodeId, p.ListenerId, p.LastPlayedAt });
 
-
-
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

@@ -1,9 +1,9 @@
-namespace Audora.Contracts.Playlists.Responses;
+namespace Audora.Contracts.Playlists.Requests;
 
-public class PlaylistResponse
+public class PlaylistRequest
 {
-    public Guid Id { get; init; }
     public string Name { get; init; } = null!;
     public string Description { get; init; } = null!;
     public string? CoverImageUrl { get; init; } = null!;
+    public bool IsPublic { get; init; }
 }

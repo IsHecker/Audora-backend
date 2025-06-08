@@ -1,6 +1,8 @@
+using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
 using Audora.Application.Follows.Queries.ListPodcastFollowers;
 using Audora.Application.Search;
+using Audora.Contracts.Search.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,17 +19,17 @@ public class SearchController : ApiController
 
 
     [HttpGet(ApiEndpoints.Search.GlobalSearch)]
-    public async Task<IActionResult> GlobalSearch([FromQuery] SearchFilter searchFilter, [FromQuery] Pagination pagination)
+    public async Task<IActionResult> GlobalSearch([FromQuery] SearchRequest searchRequest, [FromQuery] Pagination pagination)
     {
-        var query = new SearchQuery(searchFilter, pagination, IsMixed: false);
+        var query = new SearchQuery(searchRequest.ToFilter(), pagination, IsMixed: false);
         var searchResult = await _sender.Send(query);
         return searchResult.Match(Ok, Problem);
     }
 
     [HttpGet(ApiEndpoints.Search.MixedSearch)]
-    public async Task<IActionResult> MixedSearch([FromQuery] SearchFilter searchFilter, [FromQuery] Pagination pagination)
+    public async Task<IActionResult> MixedSearch([FromQuery] SearchRequest searchRequest, [FromQuery] Pagination pagination)
     {
-        var query = new SearchQuery(searchFilter, pagination, IsMixed: true);
+        var query = new SearchQuery(searchRequest.ToFilter(), pagination, IsMixed: true);
         var searchResult = await _sender.Send(query);
         return searchResult.Match(Ok, Problem);
     }

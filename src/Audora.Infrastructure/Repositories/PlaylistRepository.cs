@@ -8,4 +8,9 @@ public class PlaylistRepository : Repository<Playlist, IPlaylistRepository>, IPl
     public PlaylistRepository(ApplicationDbContext context) : base(context)
     {
     }
+
+    public Task<IQueryable<Playlist>> GetAllByListenerIdAsync(Guid listenerId)
+    {
+        return Task.FromResult(Query.Where(pl => pl.ListenerId == listenerId));
+    }
 }

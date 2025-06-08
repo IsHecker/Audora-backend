@@ -7,11 +7,10 @@ public class Playlist : Entity
     public Guid ListenerId { get; init; } // Listener who created the playlist.
     public string Name { get; init; } = null!;
     public string Description { get; init; } = null!;
+    public string? CoverImageUrl { get; init; } = null!;
     public bool IsPublic { get; init; }
-    public string? CoverImageUrl { get; init; }
 
-    public ICollection<Episode> Episodes { get; init; }
-
+    public ICollection<PlaylistEpisode> PlaylistEpisodes { get; init; } = [];
 
     public Playlist(
         Guid listenerId,
@@ -29,5 +28,24 @@ public class Playlist : Entity
 
     private Playlist()
     {
+    }
+
+    public void AddEpisode(Guid episodeId, int order)
+    {
+        PlaylistEpisodes.Add(new PlaylistEpisode
+        {
+            PlaylistId = Id,
+            EpisodeId = episodeId,
+            Order = order,
+            AddedAt = DateTime.UtcNow
+        });
+    }
+
+    public void AddEpisodes(IEnumerable<Guid> episodeIds)
+    {
+        foreach (var episodeId in episodeIds)
+        {
+            PlaylistEpisodes.Add(new PlaylistEpisode { PlaylistId = Id, EpisodeId = episodeId });
+        }
     }
 }

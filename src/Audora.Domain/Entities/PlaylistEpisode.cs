@@ -1,12 +1,15 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Audora.Domain.Entities;
 
-/// <summary>
-/// Join Table used by EF Core.
-/// </summary>
 public class PlaylistEpisode
 {
     public Guid PlaylistId { get; init; }
+    public Playlist Playlist { get; set; } = null!;
+
     public Guid EpisodeId { get; init; }
+    public Episode Episode { get; set; } = null!;
+
     public int Order { get; init; }
     public DateTime AddedAt { get; init; }
 }
