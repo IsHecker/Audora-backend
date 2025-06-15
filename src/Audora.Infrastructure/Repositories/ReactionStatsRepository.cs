@@ -1,4 +1,4 @@
-using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
 using Audora.Domain.Common.Enums;
 using Audora.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -51,7 +51,7 @@ public class ReactionStatsRepository : BaseRepository<ReactionStat, IReactionSta
             EntityType = entityType,
             ReactionType = reactionType
         };
-        await Context.ReactionStats.AddAsync(reactionStat);
+        await Context.AddAsync(reactionStat);
         return reactionStat;
     }
 

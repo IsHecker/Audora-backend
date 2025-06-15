@@ -33,8 +33,7 @@ public class Podcast : Entity
         string language,
         string[]? tags,
         Guid creatorId,
-        string? coverImageUrl = null,
-        ICollection<Episode>? episodes = null)
+        string? coverImageUrl = null)
     {
         var podcast = new Podcast
         {

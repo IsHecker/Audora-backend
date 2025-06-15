@@ -1,5 +1,5 @@
 using Audora.Application.Common;
-using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
 using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
@@ -12,7 +12,7 @@ using Audora.Domain.Entities;
 
 namespace Audora.Application.Comments.Queries.ListComments;
 
-public record ListCommentsQuery(Guid ListenerId, Guid? EntityId, Guid? ParentId, EntityType EntityType, Pagination Pagination) : IQuery<PagedResponse<CommentResponse>>;
+public record ListCommentsQuery(Guid? ListenerId, Guid? EntityId, Guid? ParentId, EntityType EntityType, Pagination Pagination) : IQuery<PagedResponse<CommentResponse>>;
 
 public class ListCommentsQueryHandler : IQueryHandler<ListCommentsQuery, PagedResponse<CommentResponse>>
 {
@@ -41,9 +41,14 @@ public class ListCommentsQueryHandler : IQueryHandler<ListCommentsQuery, PagedRe
         var commentIds = comments.Select(c => c.Id);
 
         // TODO maybe instead of dictionary, convert them directly to response objects.
+        if (request.ListenerId is null)
+        {
+            return comments.ToResponse(null, null).ToPagedResponse(request.Pagination, -1);
+        }
+
         var listenerReactionsDict = (await _reactionRepository.GetAllByEntityIdsAsync(commentIds))
-            .Where(r => r.ListenerId == request.ListenerId)
-            .ToDictionary(k => k.EntityId);
+                .Where(r => r.ListenerId == request.ListenerId)
+                .ToDictionary(k => k.EntityId);
 
         var engagementStatResult = await _engagementStatsService.GetStatsAsync(commentIds, EntityType.Comment);
 

@@ -45,12 +45,14 @@ public class Result
         return IsSuccess ? onSuccess() : onFailure(_errors!);
     }
 
-    public void Match(Action onSuccess, Action<IReadOnlyList<Error>> onFailure)
+    public Result Match(Action onSuccess, Func<IReadOnlyList<Error>, Result> onFailure)
     {
         if (IsSuccess)
+        {
             onSuccess();
-        else
-            onFailure(_errors!);
+            return Success;
+        }
+        return onFailure(_errors!);
     }
 }
 

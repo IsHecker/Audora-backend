@@ -3,6 +3,7 @@ using Audora.Application.Common.Models;
 using Audora.Application.Follows.Commands.ToggleFollow;
 using Audora.Application.Follows.Queries.ListPodcastFollowers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Audora.Api.Controllers;
@@ -25,10 +26,11 @@ public class FollowController : ApiController
         return listFollowersResult.Match(Ok, Problem);
     }
 
+    [Authorize(Roles = Roles.Listener)]
     [HttpPost(ApiEndpoints.Follows.FollowEntity)]
     public async Task<IActionResult> FollowEntity(Guid entityId, string resourceType)
     {
-        var command = new TogglePodcastFollowCommand(ListenerId, entityId, resourceType.ToEntityType());
+        var command = new TogglePodcastFollowCommand(ListenerId!.Value, entityId, resourceType.ToEntityType());
         var followingResult = await _sender.Send(command);
         return followingResult.Match(NoContent, Problem);
     }

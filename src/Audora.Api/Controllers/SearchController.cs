@@ -1,6 +1,5 @@
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
-using Audora.Application.Follows.Queries.ListPodcastFollowers;
 using Audora.Application.Search;
 using Audora.Contracts.Search.Requests;
 using MediatR;

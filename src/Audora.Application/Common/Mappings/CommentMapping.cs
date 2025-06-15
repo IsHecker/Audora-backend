@@ -29,16 +29,19 @@ public static class CommentMapping
     }
 
     public static IEnumerable<CommentResponse> ToResponse(this IEnumerable<Comment> comments,
-        Dictionary<Guid, EngagementStatsResponse> engagementStatsResponseDict,
-        Dictionary<Guid, Reaction> listenerReactionsDict)
+        Dictionary<Guid, EngagementStatsResponse>? engagementStatsResponseDict,
+        Dictionary<Guid, Reaction>? listenerReactionsDict)
     {
         return comments.Select(comment =>
         {
+            if (engagementStatsResponseDict is null)
+                return comment.ToResponse(null);
+
             engagementStatsResponseDict.TryGetValue(comment.Id, out var engagementStat);
 
             if (engagementStat is not null)
             {
-                listenerReactionsDict.TryGetValue(comment.Id, out var listenerReaction);
+                listenerReactionsDict!.TryGetValue(comment.Id, out var listenerReaction);
                 engagementStat.ListenerReaction = listenerReaction?.ToResponse();
             }
 

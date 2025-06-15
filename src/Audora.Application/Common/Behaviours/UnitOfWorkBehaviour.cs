@@ -1,6 +1,7 @@
 using System.Transactions;
 using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Application.Common.Abstractions.Messaging;
+using Audora.Application.Common.Results;
 using MediatR;
 
 namespace Audora.Application.Common.Behaviours;
@@ -8,6 +9,7 @@ namespace Audora.Application.Common.Behaviours;
 public class UnitOfWorkBehaviour<TRequest, TResponse> :
     IPipelineBehavior<TRequest, TResponse>
     where TRequest : IBaseCommand
+    where TResponse : Result
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -33,6 +35,10 @@ public class UnitOfWorkBehaviour<TRequest, TResponse> :
             TransactionScopeAsyncFlowOption.Enabled))
         {
             var response = await next(cancellationToken);
+
+            // not commiting changes when there are errors.
+            if (response.IsError)
+                return response;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

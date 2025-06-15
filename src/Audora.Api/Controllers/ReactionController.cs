@@ -7,6 +7,7 @@ using Audora.Contracts.Reactions.Requests;
 using Audora.Domain.Common.Enums;
 using Audora.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Audora.Api.Controllers;
@@ -20,6 +21,7 @@ public class ReactionController : ApiController
         _sender = sender;
     }
 
+    [Authorize(Roles = Roles.Listener)]
     [HttpGet(ApiEndpoints.Listeners.GetListenerReactionForEntity)]
     public async Task<IActionResult> GetListenerReactionForEntity(Guid listenerId, Guid entityId, EntityType entityType)
     {
@@ -36,13 +38,14 @@ public class ReactionController : ApiController
         return listResult.Match(Ok, Problem);
     }
 
+    [Authorize(Roles = Roles.Listener)]
     [HttpPost(ApiEndpoints.Reactions.ReactOnEntity)]
     public async Task<IActionResult> ReactOnEntity(Guid entityId, string resourceType, CreateReactionRequest request)
     {
         if (!Enum.TryParse<ReactionType>(request.ReactionType, true, out var reactionType))
             return Problem(detail: $"ReactionType with value '{request.ReactionType}' is not found.");
 
-        var reaction = new Reaction(ListenerId, entityId, resourceType.ToEntityType(), reactionType);
+        var reaction = new Reaction(ListenerId!.Value, entityId, resourceType.ToEntityType(), reactionType);
         var command = new ToggleReactionCommand(reaction);
         var toggleReactionResult = await _sender.Send(command);
         return toggleReactionResult.Match(Ok, Problem);

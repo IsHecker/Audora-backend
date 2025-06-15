@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using Audora.Application;
 using Audora.Infrastructure;
 
@@ -10,17 +11,20 @@ public static class Program
         var builder = WebApplication.CreateBuilder(args);
         {
             builder.Services
-                .AddPresentation()
                 .AddApplication()
-                .AddInfrastructure(builder.Configuration);
+                .AddInfrastructure(builder.Configuration)
+                .AddPresentation(builder.Configuration);
         }
-        
+
         var app = builder.Build();
         {
             app.UseHttpsRedirection();
+            app.UseCors("AllowNullOrigin");
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.MapControllers();
         }
-        
+
         app.Run();
     }
 }

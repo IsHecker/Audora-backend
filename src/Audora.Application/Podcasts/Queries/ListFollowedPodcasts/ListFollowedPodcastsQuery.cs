@@ -1,5 +1,4 @@
 using Audora.Application.Common;
-using Audora.Application.Common.Abstractions.Interfaces;
 using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Models;
 using Audora.Application.Common.Results;
@@ -9,6 +8,7 @@ using Audora.Contracts.Podcasts.Responses;
 using Audora.Domain.Common.Enums;
 using Audora.Application.Common.Mappings;
 using Audora.Domain.Entities;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
 
 namespace Audora.Application.Podcasts.Queries.ListFollowedPodcasts;
 

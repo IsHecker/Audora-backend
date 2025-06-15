@@ -7,6 +7,7 @@ using Audora.Application.Common.Models;
 using Audora.Contracts.Comments.Requests;
 using Audora.Domain.Common.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Audora.Api.Controllers;
@@ -36,15 +37,17 @@ public class CommentController : ApiController
         return listCommentsResult.Match(Ok, Problem);
     }
 
+    [Authorize(Roles = Roles.Listener)]
     [HttpPost(ApiEndpoints.Comments.CommentOnEntity)]
     public async Task<IActionResult> CommentOnEntity(Guid entityId, string resourceType, CreateCommentRequest request)
     {
-        var comment = request.ToDomain(entityId, ListenerId, resourceType.ToEntityType());
+        var comment = request.ToDomain(entityId, ListenerId!.Value, resourceType.ToEntityType());
         var command = new CreateCommentCommand(comment);
         var createCommentResult = await _sender.Send(command);
         return createCommentResult.Match(Created, Problem);
     }
 
+    [Authorize(Roles = Roles.Listener)]
     [HttpDelete(ApiEndpoints.Comments.Delete)]
     public async Task<IActionResult> DeleteComment(Guid commentId, Guid entityId, EntityType entityType)
     {

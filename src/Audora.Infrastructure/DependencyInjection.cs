@@ -1,6 +1,10 @@
 using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
+using Audora.Application.Common.Abstractions.Interfaces.Services;
+using Audora.Infrastructure.Identity;
 using Audora.Infrastructure.Repositories;
 using Audora.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +19,29 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+
+        services.AddMemoryCache();
+
+        services.ConfigureApplicationCookie(opts =>
+        {
+            opts.Events.OnRedirectToLogin = ctx =>
+            {
+                ctx.Response.StatusCode = 401;
+                return Task.CompletedTask;
+            };
+        });
+
+        services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(opts =>
+            {
+                opts.Password.RequiredLength = 4;
+                opts.Password.RequireLowercase = false;
+                opts.Password.RequireNonAlphanumeric = false;
+                opts.Password.RequireUppercase = false;
+                opts.User.RequireUniqueEmail = true;
+                opts.SignIn.RequireConfirmedEmail = true;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
 
         services.AddScoped<ICommentRepository, CommentRepository>();
@@ -31,8 +58,14 @@ public static class DependencyInjection
         services.AddScoped<IPlaylistRepository, PlaylistRepository>();
         services.AddScoped<IPlaylistEpisodeRepository, PlaylistEpisodeRepository>();
         services.AddScoped<IAudioFileRepository, AudioFileRepository>();
-        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserDeletionService, UserDeletionService>();
+        services.AddScoped<IUserSignInService, UserSignInService>();
+        services.AddSingleton<IAuthResultStore, AuthResultStore>();
+        services.AddHttpClient<IGoogleAuthService, GoogleAuthService>();
+        services.AddSingleton<TokenGeneratorService>();
 
         return services;
     }

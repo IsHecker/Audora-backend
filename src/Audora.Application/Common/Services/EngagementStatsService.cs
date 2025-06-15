@@ -1,4 +1,4 @@
-using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Results;
 using Audora.Contracts.EngagementStats.Responses;
@@ -23,10 +23,10 @@ public class EngagementStatsService
     {
         var reactionStats = await _reactionStatRepository.GetByEntityAsync(entityId, entityType);
 
-        // if (reactionStats is null)
-        // {
-        //     return Error.NotFound(description: $"ReactionStat with EntityId '{entityId}' is not found.");
-        // }
+        if (reactionStats is null)
+        {
+            return Error.NotFound(description: $"ReactionStat with EntityId '{entityId}' is not found.");
+        }
 
         var commentCount = await _commentStatRepository.GetCommentCountAsync(entityId, entityType);
 

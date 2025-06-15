@@ -1,5 +1,5 @@
 using Audora.Application.Common;
-using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
 using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
@@ -14,7 +14,7 @@ namespace Audora.Application.Episodes.Queries.ListEpisodesByParentId;
 public record ListEpisodesByParentIdQuery(
     Guid ParentId,
     string ParentType,
-    Guid ListenerId,
+    Guid? ListenerId,
     Pagination Pagination,
     bool Details = false)
     : IQuery<PagedResponse<EpisodeResponse>>;
@@ -52,10 +52,10 @@ public class ListEpisodesByParentIdQueryHandler : IQueryHandler<ListEpisodesByPa
 
         var response = episodes.Paginate(pagination).ToResponse().ToList();
 
-        if (request.Details)
+        if (request.ListenerId.HasValue && request.Details)
             response = _episodeResponseAttacher.AttachTo(response)
                 .AttachEpisodeStats()
-                .AttachListenerReactions(request.ListenerId)
+                .AttachListenerReactions(request.ListenerId!.Value)
                 .GetResponseCollection();
 
         return response.ToPagedResponse(pagination, episodes.Count());

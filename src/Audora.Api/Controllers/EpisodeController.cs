@@ -1,4 +1,5 @@
 using System.Net;
+using Audora.Application.Common;
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
 using Audora.Application.Episodes.Commands.CreateEpisode;
@@ -9,6 +10,7 @@ using Audora.Application.Episodes.Queries.ListEpisodesByParentId;
 using Audora.Application.Stats.Queries.GetEpisodeStats;
 using Audora.Contracts.Episodes.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Audora.Api.Controllers;
@@ -55,7 +57,7 @@ public class EpisodeController : ApiController
         return getEpisodeAnalyticsResult.Match(Ok, Problem);
     }
 
-
+    [Authorize(Roles = Roles.Creator)]
     [HttpPost(ApiEndpoints.Podcasts.CreateEpisode)]
     public async Task<IActionResult> CreateEpisodeForPodcast(Guid podcastId, CreateEpisodesRequest request)
     {
@@ -67,6 +69,7 @@ public class EpisodeController : ApiController
         );
     }
 
+    [Authorize(Roles = Roles.Creator)]
     [HttpPut(ApiEndpoints.Episodes.Update)]
     public async Task<IActionResult> UpdateEpisode(Guid episodeId, UpdateEpisodeRequest request)
     {
@@ -75,6 +78,7 @@ public class EpisodeController : ApiController
         return updateEpisodeResult.Match(NoContent, Problem);
     }
 
+    [Authorize(Roles = Roles.Creator)]
     [HttpDelete(ApiEndpoints.Episodes.Delete)]
     public async Task<IActionResult> DeleteEpisode(Guid episodeId)
     {

@@ -1,3 +1,4 @@
+using Audora.Application.Common;
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
 using Audora.Application.Podcasts.Commands.CreatePodcast;
@@ -10,6 +11,7 @@ using Audora.Application.Podcasts.Queries.ListPodcasts;
 using Audora.Application.Stats.Queries.GetPodcastStats;
 using Audora.Contracts.Podcasts.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Audora.Api.Controllers;
@@ -40,6 +42,7 @@ public class PodcastController : ApiController
         return getPodcastResult.Match(Ok, Problem);
     }
 
+    [Authorize(Roles = Roles.Creator)]
     [HttpGet(ApiEndpoints.Creators.ListCreatorPodcasts)]
     public async Task<IActionResult> ListCreatorPodcasts(Guid creatorId, [FromQuery] Pagination pagination)
     {
@@ -48,6 +51,7 @@ public class PodcastController : ApiController
         return listResult.Match(Ok, Problem);
     }
 
+    [Authorize(Roles = Roles.Listener)]
     [HttpGet(ApiEndpoints.Listeners.ListFollowedPodcasts)]
     public async Task<IActionResult> ListListenerFollowedPodcasts(Guid listenerId, [FromQuery] Pagination pagination)
     {
@@ -56,6 +60,7 @@ public class PodcastController : ApiController
         return listResult.Match(Ok, Problem);
     }
 
+    [Authorize(Roles = Roles.Creator)]
     [HttpGet(ApiEndpoints.Podcasts.GetStats)]
     public async Task<IActionResult> GetPodcastStats(Guid podcastId)
     {
@@ -64,6 +69,7 @@ public class PodcastController : ApiController
         return getPodcastStatsQueryResult.Match(Ok, Problem);
     }
 
+    [Authorize(Roles = Roles.Creator)]
     [HttpPost(ApiEndpoints.Podcasts.Create)]
     public async Task<IActionResult> CreatePodcast(CreatePodcastRequest request)
     {
@@ -79,6 +85,7 @@ public class PodcastController : ApiController
         );
     }
 
+    [Authorize(Roles = Roles.Creator)]
     [HttpPut(ApiEndpoints.Podcasts.Update)]
     public async Task<IActionResult> UpdatePodcast(Guid podcastId, UpdatePodcastRequest request)
     {
@@ -87,6 +94,7 @@ public class PodcastController : ApiController
         return updateResult.Match(NoContent, Problem);
     }
 
+    [Authorize(Roles = Roles.Creator)]
     [HttpDelete(ApiEndpoints.Podcasts.Delete)]
     public async Task<IActionResult> DeletePodcast(Guid podcastId)
     {

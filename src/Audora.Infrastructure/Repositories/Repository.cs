@@ -1,4 +1,4 @@
-using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
 using Audora.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,5 +1,6 @@
 using Audora.Application.Common;
-using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
+using Audora.Application.Common.Abstractions.Interfaces.Services;
 using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
@@ -32,8 +33,5 @@ public class ListPodcastFollowersQueryHandler : IQueryHandler<ListPodcastFollowe
         var users = await _userService.GetUsersByIdsAsync(followerIds.Paginate(request.Pagination));
 
         return users.ToResponse().ToPagedResponse(request.Pagination, followerIds.Count());
-
-
-        //return (await _userService.GetUsersByIdsAsync(followerIds)).ToResult<IEnumerable<User>>();
     }
 }

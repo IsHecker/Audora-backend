@@ -1,4 +1,4 @@
-using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
 using Audora.Domain.Common.Enums;
 using Audora.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -53,7 +53,7 @@ public class CommentStatRepository : BaseRepository<CommentStat, ICommentStatRep
             EntityId = entityId,
             EntityType = entityType
         };
-        await Context.CommentStats.AddAsync(commentStat);
+        await Context.AddAsync(commentStat);
         return commentStat;
     }
 }

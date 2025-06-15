@@ -13,6 +13,7 @@ public static class ApiEndpoints
     private const string CommentsBase = $"{ApiBase}/comments";
     private const string FollowsBase = $"{ApiBase}/follows";
     private const string PlaybackSessionsBase = $"{ApiBase}/playback-sessions";
+    private const string AuthenticationBase = $"{ApiBase}/auth";
 
     public static class Podcasts
     {
@@ -32,7 +33,6 @@ public static class ApiEndpoints
 
     public static class Episodes
     {
-        public const string List = EpisodesBase;
         public const string GetById = $"{EpisodesBase}/{{episodeId:guid}}";
         public const string GetBySlug = $"{EpisodesBase}/slug/{{slug:guid}}";
         public const string GetStats = $"{GetById}/stats";
@@ -114,5 +114,15 @@ public static class ApiEndpoints
         public const string ListPlaybackSessionHistory = PlaybackSessionsBase;
         public const string GetOrCreatePlaybackSession = PlaybackSessionsBase;
         public const string MarkPlaybackProgress = $"{PlaybackSessionsBase}/{{sessionId}}/progress";
+    }
+
+    public static class Authentication
+    {
+        public const string LoginWithGoogle = $"{AuthenticationBase}/login-google";
+        public const string RegisterWithGoogle = $"{AuthenticationBase}/register-google";
+        public const string LoginLocal = $"{AuthenticationBase}/login-local";
+        public const string RegisterLocal = $"{AuthenticationBase}/register-local";
+        public const string Callback = $"{AuthenticationBase}/callback";
+        public const string AuthResult = $"{AuthenticationBase}/result";
     }
 }

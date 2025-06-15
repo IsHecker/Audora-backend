@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Audora.Domain.Entities;
 
 public class PlaylistEpisode

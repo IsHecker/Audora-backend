@@ -1,4 +1,4 @@
-using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Services;
 using Audora.Application.Common.Models;
 
 namespace Audora.Infrastructure.Services;
@@ -20,13 +20,13 @@ public class UserService : IUserService
     }.AsQueryable();
 
 
-    public async Task<IQueryable<User>> GetUsersAsync()
+    public Task<IQueryable<User>> GetUsersAsync()
     {
-        return users;
+        return Task.FromResult(users);
     }
 
-    public async Task<IQueryable<User>> GetUsersByIdsAsync(IEnumerable<Guid> userIds)
+    public Task<IQueryable<User>> GetUsersByIdsAsync(IEnumerable<Guid> userIds)
     {
-        return users.Where(u => userIds.Contains(u.Id));
+        return Task.FromResult(users.Where(u => userIds.Contains(u.Id)));
     }
 }

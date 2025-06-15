@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
 using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Results;
 using Audora.Domain.Entities;
@@ -40,7 +41,7 @@ public class CreateEpisodeCommandHandler : ICommandHandler<CreateEpisodeCommand,
 
         podcast.AddEpisodes(episodes);
 
-        // // to access episode id.
+        // to access episode id.
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var audioFilesDict = await _audioFileRepository.GetByIdsAsync(episodes.Select(ep => ep.AudioFileId));

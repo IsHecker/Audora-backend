@@ -1,5 +1,5 @@
 using Audora.Application.Common;
-using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
 using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Models;
@@ -10,7 +10,7 @@ using Audora.Contracts.Podcasts.Responses;
 
 namespace Audora.Application.Podcasts.Queries.ListPodcasts;
 
-public record ListPodcastsQuery(Guid ListenerId, Pagination Pagination) : IQuery<PagedResponse<PodcastResponse>>;
+public record ListPodcastsQuery(Guid? ListenerId, Pagination Pagination) : IQuery<PagedResponse<PodcastResponse>>;
 
 public class ListPodcastsQueryHandler : IQueryHandler<ListPodcastsQuery, PagedResponse<PodcastResponse>>
 {
@@ -34,10 +34,13 @@ public class ListPodcastsQueryHandler : IQueryHandler<ListPodcastsQuery, PagedRe
 
         var response = podcasts.Paginate(request.Pagination).ToResponse().ToList();
 
+        if (request.ListenerId is null)
+            return response.ToPagedResponse(request.Pagination, podcasts.Count());
+
         return _podcastResponseAttacher.AttachTo(response)
-            .AttachFollowStatus(request.ListenerId)
-            .AttachRatings(request.ListenerId)
-            .GetResponseCollection()
-            .ToPagedResponse(request.Pagination, podcasts.Count());
+                .AttachFollowStatus(request.ListenerId!.Value)
+                .AttachRatings(request.ListenerId!.Value)
+                .GetResponseCollection()
+                .ToPagedResponse(request.Pagination, podcasts.Count());
     }
 }

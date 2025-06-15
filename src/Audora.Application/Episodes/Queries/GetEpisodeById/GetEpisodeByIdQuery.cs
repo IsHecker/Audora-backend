@@ -1,4 +1,4 @@
-using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
 using Audora.Application.Common.Abstractions.Messaging;
 using Audora.Application.Common.Mappings;
 using Audora.Application.Common.Results;
@@ -7,7 +7,7 @@ using Audora.Contracts.Episodes.Responses;
 
 namespace Audora.Application.Episodes.Queries.GetEpisodeById;
 
-public record GetEpisodeByIdQuery(Guid ListenerId, Guid EpisodeId) : IQuery<EpisodeResponse>;
+public record GetEpisodeByIdQuery(Guid? ListenerId, Guid EpisodeId) : IQuery<EpisodeResponse>;
 
 public class GetEpisodeByIdQueryHandler : IQueryHandler<GetEpisodeByIdQuery, EpisodeResponse>
 {
@@ -29,9 +29,13 @@ public class GetEpisodeByIdQueryHandler : IQueryHandler<GetEpisodeByIdQuery, Epi
             return Error.NotFound(description: $"Episode with Id '{request.EpisodeId}' is not found.");
         }
 
-        return _episodeResponseAttacher.AttachTo(episode.ToResponse())
+        var response = episode.ToResponse();
+        if (request.ListenerId is null)
+            return response;
+
+        return _episodeResponseAttacher.AttachTo(response)
             .AttachEpisodeStats()
-            .AttachListenerReactions(request.ListenerId)
+            .AttachListenerReactions(request.ListenerId!.Value)
             .GetSingleResponse();
     }
 }

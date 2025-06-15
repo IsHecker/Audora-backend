@@ -1,4 +1,4 @@
-using Audora.Application.Common.Abstractions.Interfaces;
+using Audora.Application.Common.Abstractions.Interfaces.Repositories;
 using Audora.Contracts.Podcasts.Responses;
 using Audora.Domain.Common.Enums;
 

@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using Audora.Application.Common.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -7,7 +8,17 @@ namespace Audora.Api.Controllers;
 [ApiController]
 public class ApiController : ControllerBase
 {
-    protected readonly Guid ListenerId = Guid.Parse("735331aa-72c7-4d48-a092-a0ce72a6c49e");
+    protected Guid? ListenerId
+    {
+        get
+        {
+            var id = User.FindFirst(JwtRegisteredClaimNames.Sub);
+            if (id is null)
+                return null;
+
+            return Guid.Parse(id.Value);
+        }
+    }
 
     protected IActionResult Problem(List<Error> errors)
     {
